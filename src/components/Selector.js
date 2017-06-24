@@ -1,30 +1,43 @@
-/**
- * Created by Shesha on 24.06.2017.
- */
-
-const getSearchList = () => {
-
-    /*
-    if (action.typeSearch === 'Name') {
-        const file = action.notes.filter(v => v.text === action.text);
-        const folder = action.folders.filter(v => v.text === action.text);
-        state.push(folder, file)
-        console.log(state)
-        return {
-            tag: [],
-            file,
-            folder
-        };
-    } else if (action.typeSearch === 'Tag') {
-        const filters = action.notes.filter(v => v.tags.find(t => t === action.text) !== undefined);
-        return state.concat(filters);
-    } else if (action.typeSearch === 'All') {
-        const file = action.notes.filter(v => v.text === action.text);
-        const folder = action.folders.filter(v => v.text === action.text);
-        const tag = action.notes.filter(v => v.tags.find(t => t === action.text) !== undefined);
-        return state.concat(folder, file, tag);
+export const getSearchList = (searchState, folders, notes) => {
+  switch (searchState.typeSearch) {
+    case 'Name': {
+      const file = notes.filter(v => v.text === searchState.text);
+      const folder = folders.filter(v => v.text === searchState.text);
+      return {
+        file,
+        folder,
+        tag: [],
+        types: 'Name',
+      };
     }
-    return state;*/
+    case 'Tag': {
+      const tag = notes.filter(v => v.tags.find(t => t === searchState.text) !== undefined);
+      return {
+        file: [],
+        folder: [],
+        tag,
+        types: 'Tag',
+      };
+    }
+    case 'All': {
+      const file = notes.filter(v => v.text === searchState.text);
+      const folder = folders.filter(v => v.text === searchState.text);
+      const tag = notes.filter(v => v.tags.find(t => t === searchState.text) !== undefined);
+      return {
+        file,
+        folder,
+        tag,
+        types: 'All',
+      };
+    }
+    default:
+      return {
+        file: [],
+        folder: [],
+        tag: [],
+        types: '',
+      };
+  }
 };
 
-export default getSearchList;
+export default{};

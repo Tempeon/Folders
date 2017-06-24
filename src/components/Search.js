@@ -16,7 +16,7 @@ class Search extends Component {
     this.setState({ name: event.target.value });
   }
   render() {
-    const { onSearchFile, notes, folders } = this.props;
+    const { onSearchFile, stateSearch } = this.props;
     return (
       <div>
         <span><input type="radio" name="typeSearch" value="Name" onClick={() => this.setType('Name')} />Name</span>
@@ -25,32 +25,79 @@ class Search extends Component {
         <input type="text" onChange={value => this.findName(value)} />
         <button onClick={() => onSearchFile(this.state.type,
                                             this.state.name,
-                                            notes,
-                                            folders)}
+                                            )}
         >Find</button>
-
+        {stateSearch.types === 'Name' && (
+          <div>
+            <h3>Folders:</h3>
+            <ul>
+              {stateSearch.folder.map(v => (
+                <li key={v.id}>
+                  <Link to={`/${v.id}`} >{v.text}</Link>
+                </li>
+              ))}
+            </ul>
+            <h3>Notes: </h3>
+            <ul>
+              {stateSearch.file.map(v => (
+                <li key={v.id}>
+                  <Link to={`/${v.folder}/${v.id}`} >{v.text} </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+        {stateSearch.types === 'Tag' && (
+          <div>
+            <h3>Tag:</h3>
+            <ul>
+              {stateSearch.tag.map(v => (
+                <li key={v.id}>
+                  <Link to={`/${v.folder}/${v.id}`} >{v.text}</Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+        {stateSearch.types === 'All' && (
+        <div>
+          <h3>Folders:</h3>
+          <ul>
+            {stateSearch.folder.map(v => (
+              <li key={v.id}>
+                <Link to={`/${v.id}`} >{v.text}</Link>
+              </li>
+                    ))}
+          </ul>
+          <h3>Notes: </h3>
+          <ul>
+            {stateSearch.file.map(v => (
+              <li key={v.id}>
+                <Link to={`/${v.folder}/${v.id}`} >{v.text} </Link>
+              </li>
+                    ))}
+          </ul>
+          <h3>Tag:</h3>
+          <ul>
+            {stateSearch.tag.map(v => (
+              <li key={v.id}>
+                <Link to={`/${v.folder}/${v.id}`} >{v.text}</Link>
+              </li>
+             ))}
+          </ul>
+        </div>
+        )}
       </div>
     );
   }
 }
 Search.propTypes = {
-  notes: PropTypes.arrayOf(PropTypes.shape({
-    content: PropTypes.string.isRequired,
-    edit: PropTypes.bool.isRequired,
-    folder: PropTypes.string.isRequired, // /string? number?
-    id: PropTypes.number.isRequired,
-    text: PropTypes.string.isRequired,
-  }).isRequired).isRequired,
   onSearchFile: PropTypes.func.isRequired,
-
+  stateSearch: PropTypes.shape({
+    file: PropTypes.array.isRequired,
+    folder: PropTypes.array.isRequired,
+    tag: PropTypes.array.isRequired,
+    types: PropTypes.string.isRequired,
+  }).isRequired,
 };
 export default Search;
-
-
-/*<ul>
-    {stateSearch.map(v => (
-        <li key={v.id}>
-            <Link to={`${v.folder ? `/${v.folder}` : ''}/${v.id}`} >{v.text}</Link>{v.folder ? ' file' : ' folder'}
-        </li>
-    ))}
-</ul>*/
