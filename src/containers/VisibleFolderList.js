@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import { removeFolder, editName, newNameFolder, removeNoteFolder, addSubFolder } from '../action';
+import { removeFolder, editName, newNameFolder, removeNoteFolder, addSubFolder, addFolder } from '../action';
 import FolderList from '../components/FolderList';
 
 const mapStateToProps = state => ({
@@ -20,6 +20,9 @@ const mapDispatchToProps = dispatch => ({
   },
   onAddSubFolder: (idParent, text) => {
     dispatch(addSubFolder(idParent, text));
+  },
+  onAddFolder: (text) => {
+    dispatch(addFolder(text));
   },
 });
 
