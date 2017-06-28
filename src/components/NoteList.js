@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import FormNoteName from './FormNoteName';
 import Note from './Note';
 
 class NoteList extends Component {
@@ -8,6 +9,7 @@ class NoteList extends Component {
     this.state = { addNote: false, nameNote: '' };
     this.startAddNote = this.startAddNote.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.addNote = this.addNote.bind(this);
   }
 
   startAddNote() {
@@ -16,18 +18,21 @@ class NoteList extends Component {
   handleChange(event) {
     this.setState({ nameNote: event.target.value });
   }
+  addNote(value) {
+    console.log(value)
+    const { onAddNote, match } = this.props;
+    onAddNote(value.noteName, match.params.idFolder);
+    this.startAddNote();
+  }
   render() {
-    const { todos, match, onRemoveNote, onEditName, onNewNameNote, onAddNote } = this.props;
+    const { todos, match, onRemoveNote, onEditName, onNewNameNote, } = this.props;
     const tod = todos.filter(v => v.folder === match.params.idFolder);
     return (
       <div>
         <div>
           <h3> Note <span role="presentation" onClick={() => this.startAddNote()}> + </span></h3>
           {this.state.addNote && (
-            <div>
-              <input type="text" onChange={this.handleChange} />
-              <span role="presentation" onClick={() => { onAddNote(this.state.nameNote, match.params.idFolder); this.startAddNote(); }}> addNote </span>
-            </div>
+            <FormNoteName onSubmit={this.addNote} />
           )}
         </div>
         <div>

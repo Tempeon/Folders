@@ -1,35 +1,29 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Field, reduxForm } from 'redux-form';
+import FormFolderName from './FormFolderName';
 import Folder from './Folder';
 
-/* const FolderList = ({ todos,
-                      onRemoveFolder,
-                      onEditName,
-                      onNewNameFolder,
-                      match,
-                      onAddSubFolder,
-                    }) => {*/
+
 class FolderList extends Component {
   constructor(props) {
     super(props);
     this.state = { nameFolder: '', addFolder: false };
     this.handleChange = this.handleChange.bind(this);
     this.showFormAddFolder = this.showFormAddFolder.bind(this);
+    this.addFolder = this.addFolder.bind(this);
   }
 
   handleChange(event) {
-    this.setState({ nameFolder: event.target.value,});
+    this.setState({ nameFolder: event.target.value });
   }
   showFormAddFolder() {
     this.setState({ addFolder: !this.state.addFolder });
   }
-  addFolder() {
-    const { onAddFolder } = this.props
-    onAddFolder(this.state.nameFolder)
+  addFolder(value) {
+    const { onAddFolder } = this.props;
+    onAddFolder(value.folderName);
     this.showFormAddFolder();
   }
-
   render() {
     const { todos,
       onRemoveFolder,
@@ -38,16 +32,12 @@ class FolderList extends Component {
       match,
       onAddSubFolder,
   } = this.props;
-    console.log(Field, reduxForm)
-    const tod = todos.filter(v => v.subfoledr !== [] && v.idParent === null);
+    const tod = todos.filter(v => v.idParent === null);
     return (
       <div>
         <h3>Folders <span role="presentation" onClick={() => this.showFormAddFolder()}>+</span></h3>
         {this.state.addFolder && (
-          <div>
-            <input type="text" onChange={this.handleChange} />
-            <button onClick={() => this.addFolder()}>Add</button>
-          </div>
+          <FormFolderName onSubmit={this.addFolder} />
         )}
         <ul>
           {tod.map(todo =>

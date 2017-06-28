@@ -18,7 +18,7 @@ class Content extends Component {
     this.setState({ name: event.target.value });
   }
   addTag(onAddTag, id) {
-    this.setState({ formAddTag: !this.state.formAddTag })
+    this.setState({ formAddTag: !this.state.formAddTag });
     onAddTag(id, this.state.name);
   }
   render() {
@@ -36,7 +36,7 @@ class Content extends Component {
             <button onClick={() => this.addTag(onAddTag, sod.id)} > Add </button>
           </div>
         }
-        <span>Tegs:</span>
+        <span>Tags:</span>
         {sod.tags.map(v => (
           <span key={v}>{v}/</span>
         ))}<br />

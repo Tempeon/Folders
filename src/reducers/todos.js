@@ -37,7 +37,7 @@ const deletFolder = (state, action, mass = [action]) => {
   state.map((t) => {
     if (t.idParent === action) {
       mass.push(t.id);
-      if (t.subfolder !== []) { deletFolder(state, t.id, mass); }
+      //if (t.subfolder !== []) { deletFolder(state, t.id, mass); }
     }
     return t;
   });
