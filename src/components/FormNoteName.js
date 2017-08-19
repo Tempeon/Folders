@@ -1,5 +1,18 @@
 import React from 'react';
 import { Field, reduxForm } from 'redux-form';
+import TextField from 'material-ui/TextField';
+import IconButton from 'material-ui/IconButton';
+import IconSave from 'material-ui/svg-icons/content/save';
+import IconCancel from 'material-ui/svg-icons/content/reply';
+
+const style = {
+  display: 'flex',
+  alignItems: 'center',
+  marginBottom: '10px',
+};
+const styleTextField = {
+  width: '100px',
+};
 
 const validate = (values) => {
   const errors = {};
@@ -12,28 +25,42 @@ const validate = (values) => {
 };
 
 const renderField = ({ input, label, type, meta: { touched, error, warning } }) => (
-  <div>
-    <label>{label}</label>
-    <div>
-      <input {...input} placeholder={label} type={type} />
-      {touched && ((error && <span>{error}</span>))}
-    </div>
-  </div>
+    <TextField
+      style={styleTextField}
+      hintText={label}
+      {...input}
+      type={type}
+      errorText={touched && ((error && <span>{error}</span>))}
+    />
 );
 
 const FormNoteName = (props) => {
-  const { handleSubmit } = props;
+  const { handleSubmit, cancel } = props;
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} style={{...style}}>
       <Field name="noteName" type="text" component={renderField} label="NameNote" />
       <div>
-        <button type="submit">Submit</button>
+        <IconButton
+          type="submit"
+          tooltip="Save"
+        >
+          <IconSave />
+        </IconButton>
+        <IconButton
+          onClick={() => cancel()}
+          tooltip="Cancel"
+        >
+          <IconCancel />
+        </IconButton>
       </div>
     </form>
   );
 };
 
-export default reduxForm({
-  form: 'FormNoteName',
-  validate,
-})(FormNoteName);
+export default (props) => {
+  const Form = reduxForm({
+    form: `FormNoteName${props.initialValues.noteName}`,
+    validate,
+  })(FormNoteName);
+  return <Form {...props} />;
+};

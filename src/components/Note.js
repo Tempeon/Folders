@@ -1,6 +1,57 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
+import flow from 'lodash/flow';
+import { DragSource, DropTarget } from 'react-dnd';
+import IconButton from 'material-ui/IconButton';
+import IconDelete from 'material-ui/svg-icons/action/delete-forever';
+import IconEdit from 'material-ui/svg-icons/content/create';
+import FormNoteName from './FormNoteName';
+
+const removeStyle = {
+  position: 'absolute',
+  top: '-25px',
+  right: '-25px',
+};
+
+const style = {
+  position: 'relative',
+  border: '1px solid gray',
+  backgroundColor: 'white',
+  cursor: 'move',
+  display: 'flex',
+  width: '200px',
+  height: '60px',
+  float: 'left',
+  flexWrap: 'wrap',
+  paddingLeft: '10px',
+  marginBottom: '.5rem',
+  marginLeft: '.5rem',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+
+};
+const NoteSource = {
+  beginDrag(props) {
+    return {
+      id: props.id,
+      index: props.index,
+      type: props.type,
+    };
+  },
+};
+const NoteTarget = {
+  hover(props, monitor) {
+    const dragId = monitor.getItem().id;
+    const hoverId = props.id;
+    if (dragId === hoverId) {
+      return;
+    }
+    props.moveNote(dragId, hoverId);
+    monitor.getItem().index = hoverId;
+  },
+};
+
 
 class Note extends Component {
   constructor(props) {
@@ -12,22 +63,40 @@ class Note extends Component {
     this.setState({ newName: event.target.value });
   }
   render() {
-    const { todo, match, onRemoveNote, onEditName, onNewNameNote } = this.props;
+    const { todo,
+            match,
+            onRemoveNote,
+            onEditName,
+            onNewNameNote,
+            isDragging,
+            connectDragSource,
+            connectDropTarget,
+          } = this.props;
+    const opacity = isDragging ? 0 : 1;
+    console.log(match)
     if (!todo.edit) {
-      return (
-        <div>
-          <Link to={`${match.url}/${todo.id}`}>{todo.text}</Link>
-          <Link to={`${match.url}`} onClick={() => onRemoveNote(todo.id)}>/DEL</Link>
-          <span role="presentation" onClick={() => onEditName(todo.id)}>/EDIT/</span>
-        </div>
-      );
+      return connectDragSource(connectDropTarget(
+        <div style={{ ...style, opacity }}>
+          <NavLink to={`/${match.params.idFolder}/${todo.id}`}>{todo.text}</NavLink>
+          <div>
+            <IconButton style={removeStyle} >
+              <IconDelete onClick={() => onRemoveNote(todo.id)} />
+            </IconButton>
+            <IconButton>
+              <IconEdit onClick={() => onEditName(todo.id)} />
+            </IconButton>
+          </div>
+        </div>,
+      ));
     }
-
     return (
-      <div>
-        <input type="text" onChange={this.handleChange} />
-        <span role="presentation" onClick={() => onNewNameNote(todo.id, this.state.newName)}>/OK/</span>
-        <span role="presentation" onClick={() => onEditName()}>Cancel/</span>
+      <div style={{ ...style }}>
+        <FormNoteName
+          rename
+          onSubmit={value => onNewNameNote(todo.id, value.noteName)}
+          initialValues={{ noteName: todo.text }}
+          cancel={() => onEditName(todo.id)}
+        />
       </div>
     );
   }
@@ -37,9 +106,9 @@ Note.propTypes = {
   todo: PropTypes.shape({
     content: PropTypes.string.isRequired,
     edit: PropTypes.bool.isRequired,
-    folder: PropTypes.string.isRequired, // Edit string => number
+    folder: PropTypes.number.isRequired,
     id: PropTypes.number.isRequired,
-    tegs: PropTypes.arrayOf.isRequired,
+    tags: PropTypes.arrayOf.isRequired,
     text: PropTypes.string.isRequired,
   }).isRequired,
   match: PropTypes.shape({
@@ -50,6 +119,18 @@ Note.propTypes = {
   onRemoveNote: PropTypes.func.isRequired,
   onEditName: PropTypes.func.isRequired,
   onNewNameNote: PropTypes.func.isRequired,
+  isDragging: PropTypes.bool.isRequired,
+  connectDragSource: PropTypes.func.isRequired,
+  connectDropTarget: PropTypes.func.isRequired,
 };
 
-export default Note;
+
+export default flow(
+  DropTarget('Note', NoteTarget, connect => ({
+    connectDropTarget: connect.dropTarget(),
+  })),
+  DragSource('Note', NoteSource, (connect, monitor) => ({
+    connectDragSource: connect.dragSource(),
+    isDragging: monitor.isDragging(),
+  })),
+)(Note);

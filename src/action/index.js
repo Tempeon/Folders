@@ -1,5 +1,5 @@
 let idFolder = 3;
-let idNote = 4;
+let idNote = 9;
 export const addFolder = text => ({
   type: 'ADD_FOLDER',
   id: idFolder++,
@@ -86,4 +86,36 @@ export const searchFile = (typeSearch, text) => ({
   type: 'SEARCH_FILE',
   typeSearch,
   text,
+});
+
+export const deleteTag = (id, text) => ({
+  type: 'DELETE_TAG',
+  id,
+  text,
+});
+
+export const formContentNote = text => ({
+  type: 'FORM_CONTENT_NOTE',
+  text,
+});
+
+export const moveNote = (dragIndex, hoverIndex, sideShift) => ({
+  type: 'MOVE_NOTE',
+  dragIndex,
+  hoverIndex,
+  sideShift,
+});
+
+export const moveFolder = (dragId, hoverId, sideShift, idParent) => ({
+  type: 'MOVE_FOLDER',
+  dragId,
+  hoverId,
+  sideShift,
+  idParent,
+});
+
+export const addNoteToFolder = (noteId, folderId) => ({
+  type: 'ADD_NOTE_TO_FOLDER',
+  noteId,
+  folderId,
 });

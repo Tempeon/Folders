@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import FormContentNote from './FormContentNote';
 
 class Content extends Component {
   constructor(props) {
@@ -7,6 +8,7 @@ class Content extends Component {
     this.state = { contentText: '', formAddTag: false, name: '' };
     this.handleChange = this.handleChange.bind(this);
     this.showFormAddTag = this.showFormAddTag.bind(this);
+    this.test = this.test.bind(this);
   }
   handleChange(event) {
     this.setState({ contentText: event.target.value });
@@ -14,37 +16,21 @@ class Content extends Component {
   showFormAddTag() {
     this.setState({ formAddTag: !this.state.formAddTag });
   }
-  tagName(event) {
-    this.setState({ name: event.target.value });
-  }
-  addTag(onAddTag, id) {
-    this.setState({ formAddTag: !this.state.formAddTag });
-    onAddTag(id, this.state.name);
+
+  test(value) {
+    const { onSaveContent } = this.props;
+    onSaveContent(value);
   }
   render() {
-    const { content, match, onEditNote, onNewNameNoteContent, onAddTag } = this.props;
+    const { content, match } = this.props;
     const sod = content.find(v => v.id === parseInt(match.params.idNote, 10));
     return (
       <div>
-        <hr />
-        <span> Name </span><br />
-        <input type="text" value={sod.text} onChange={value => onNewNameNoteContent(sod.id, value.target.value)} /><br />
-        <span role="presentation" onClick={() => this.showFormAddTag()}>Add tag </span><br />
-        {this.state.formAddTag &&
-          <div>
-            <input type="text" onChange={value => this.tagName(value)} />
-            <button onClick={() => this.addTag(onAddTag, sod.id)} > Add </button>
-          </div>
-        }
-        <span>Tags:</span>
-        {sod.tags.map(v => (
-          <span key={v}>{v}/</span>
-        ))}<br />
-        <textarea
-          value={sod.content}
-          onChange={value => onEditNote(sod.id, value.target.value)}
+        <FormContentNote
+          property={sod}
+          onSubmit={this.test}
+          initialValues={{ name: sod.text, Tags: sod.tags, content: sod.content, id: sod.id }}
         />
-        <br />
       </div>
     );
   }
@@ -54,7 +40,7 @@ Content.propTypes = {
   content: PropTypes.arrayOf(PropTypes.shape({
     content: PropTypes.string.isRequired,
     edit: PropTypes.bool.isRequired,
-    folder: PropTypes.string.isRequired,
+    folder: PropTypes.number.isRequired,
     id: PropTypes.number.isRequired,
     text: PropTypes.string.isRequired,
   }).isRequired).isRequired,
@@ -64,9 +50,7 @@ Content.propTypes = {
       idNote: PropTypes.string.isRequired, // Edit string => Number
     }).isRequired,
   }).isRequired,
-  onAddTag: PropTypes.func.isRequired,
-  onEditNote: PropTypes.func.isRequired,
-  onNewNameNoteContent: PropTypes.func.isRequired,
+  onSaveContent: PropTypes.func.isRequired,
 };
 
 export default Content;

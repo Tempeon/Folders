@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import NoteList from '../components/NoteList';
-import { removeNote, editNameNote, newNameNote, addNote } from '../action';
+import { removeNote, editNameNote, newNameNote, addNote, moveNote } from '../action';
 
 const mapStateToProps = state => ({
   todos: state.noteTodos,
@@ -18,6 +18,9 @@ const DispatchToProps = dispatch => ({
   },
   onAddNote: (text, folder) => {
     dispatch(addNote(text, folder));
+  },
+  onMoveNote: (dragIndex, hoverIndex, sideShift) => {
+    dispatch(moveNote(dragIndex, hoverIndex, sideShift));
   },
 });
 

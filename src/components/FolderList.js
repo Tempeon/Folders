@@ -1,8 +1,15 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import IconButton from 'material-ui/IconButton';
+import IconCreateFolder from 'material-ui/svg-icons/file/create-new-folder';
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import FormFolderName from './FormFolderName';
 import Folder from './Folder';
 
+const style = {
+  display: 'flex',
+  alignItems: 'center',
+};
 
 class FolderList extends Component {
   constructor(props) {
@@ -11,6 +18,8 @@ class FolderList extends Component {
     this.handleChange = this.handleChange.bind(this);
     this.showFormAddFolder = this.showFormAddFolder.bind(this);
     this.addFolder = this.addFolder.bind(this);
+    this.moveFolder = this.moveFolder.bind(this);
+    this.addNoteFolder = this.addNoteFolder.bind(this);
   }
 
   handleChange(event) {
@@ -24,6 +33,14 @@ class FolderList extends Component {
     onAddFolder(value.folderName);
     this.showFormAddFolder();
   }
+  moveFolder(dragId, hoverId, sideShift, idParent) {
+    const { onMoveFolder } = this.props;
+    onMoveFolder(dragId, hoverId, sideShift, idParent);
+  }
+  addNoteFolder(folderId, noteId) {
+    const { onAddNoteToFolder } = this.props;
+    onAddNoteToFolder(noteId, folderId);
+  }
   render() {
     const { todos,
       onRemoveFolder,
@@ -31,27 +48,49 @@ class FolderList extends Component {
       onNewNameFolder,
       match,
       onAddSubFolder,
+
   } = this.props;
     const tod = todos.filter(v => v.idParent === null);
     return (
       <div>
-        <h3>Folders <span role="presentation" onClick={() => this.showFormAddFolder()}>+</span></h3>
+        <div style={{ ...style }}>
+          <h3>Folders</h3>
+          <IconButton
+            onClick={() => this.showFormAddFolder()}
+            tooltip="AddFolder"
+          >
+            <IconCreateFolder />
+          </IconButton>
+        </div>
         {this.state.addFolder && (
-          <FormFolderName onSubmit={this.addFolder} />
+          <FormFolderName
+            initialValues={{ nameForm: 'addFolder' }}
+            rename={false}
+            onSubmit={this.addFolder}
+            cancel={() => this.showFormAddFolder()}
+          />
         )}
+
         <ul>
-          {tod.map(todo =>
-          (<Folder
-            key={todo.id}
-            todo={todo}
-            onRemoveFolder={onRemoveFolder}
-            onEditName={onEditName}
-            onNewNameFolder={onNewNameFolder}
-            match={match}
-            onAddSubFolder={onAddSubFolder}
-            todos={todos}
-          />))}
+          {tod.map((todo, i) => (
+
+            <Folder
+              index={i}
+              id={todo.id}
+              key={todo.id}
+              todo={todo}
+              onRemoveFolder={onRemoveFolder}
+              onEditName={onEditName}
+              onNewNameFolder={onNewNameFolder}
+              match={match}
+              moveFolder={this.moveFolder}
+              onAddSubFolder={onAddSubFolder}
+              todos={todos}
+              addNoteFolder={this.addNoteFolder}
+            />
+          ))}
         </ul>
+
       </div>
     );
   }
@@ -62,8 +101,10 @@ FolderList.propTypes = {
     url: PropTypes.string.isRequired,
   }).isRequired,
   onAddFolder: PropTypes.func.isRequired,
+  onAddNoteToFolder: PropTypes.func.isRequired,
   onAddSubFolder: PropTypes.func.isRequired,
   onEditName: PropTypes.func.isRequired,
+  onMoveFolder: PropTypes.func.isRequired,
   onNewNameFolder: PropTypes.func.isRequired,
   onRemoveFolder: PropTypes.func.isRequired,
   todos: PropTypes.arrayOf(PropTypes.shape({

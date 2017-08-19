@@ -1,0 +1,17 @@
+.parentFolder {
+    display: flex;
+    align-items: center;
+}
+
+.parentFolder:hover .Folder {
+    display: block;
+}
+
+header {
+    flex: 15;
+}
+
+.Folder {
+    flex: 1;
+    display: none;
+}

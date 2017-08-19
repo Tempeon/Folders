@@ -37,7 +37,6 @@ const deletFolder = (state, action, mass = [action]) => {
   state.map((t) => {
     if (t.idParent === action) {
       mass.push(t.id);
-      //if (t.subfolder !== []) { deletFolder(state, t.id, mass); }
     }
     return t;
   });
@@ -77,9 +76,28 @@ const todo = (state, action) => {
       return state;
   }
 };
-
+const parent = (state, id) => {
+  return {
+    ...state,
+    idParent: id,
+  };
+}
 const todos = (state = folder, action) => {
   switch (action.type) {
+    case 'MOVE_FOLDER':
+      let leftMove = false;
+      const dragCard = state.find(v => v.id === action.dragId);
+      const newDragCard = parent(dragCard, action.idParent)
+      return state.reduce((p, v) => {
+        if (v.id === action.dragId) {
+          leftMove = true;
+          return p;
+        }
+        if (v.id !== action.hoverId) {
+          return [...p, v];
+        }
+        return leftMove ? [...p, v, newDragCard ] : [...p, newDragCard, v ];
+      }, []);
     case 'ADD_FOLDER':
       return [
         ...state,
@@ -95,10 +113,6 @@ const todos = (state = folder, action) => {
         todo(t, action));
     case 'ADD_SUB_FOLDER':
       return addSubFolder(state, action);
-      /*
-      state = addSubFolder(state, action);
-      return state.map(v =>
-         todo(v, action));*/
     default:
       return state;
   }
