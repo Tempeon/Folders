@@ -19,17 +19,18 @@ class Content extends Component {
 
   test(value) {
     const { onSaveContent } = this.props;
+    console.log(value)
     onSaveContent(value);
   }
   render() {
-    const { content, match } = this.props;
-    const sod = content.find(v => v.id === parseInt(match.params.idNote, 10));
+    const { content, match, width} = this.props;
+    const sod = content.list.find(v => v.id === parseInt(match.params.idNote, 10));
     return (
-      <div>
+      <div  style={{ width: `${width}`, marginLeft: '20px', marginTop: '50px' }}>
         <FormContentNote
           property={sod}
           onSubmit={this.test}
-          initialValues={{ name: sod.text, Tags: sod.tags, content: sod.content, id: sod.id }}
+          initialValues={{ name: sod.Name, Content: sod.Content, id: sod.id }}
         />
       </div>
     );

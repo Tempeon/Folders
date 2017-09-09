@@ -6,11 +6,13 @@ import FolderParent from './FolderParent';
 class Folder extends Component {
   constructor(props) {
     super(props);
-    this.state = { Name: '', addSub: false };
+    this.state = { Name: '', addSub: false, showSubFolder: false };
     this.handleChange = this.handleChange.bind(this);
     this.addSubFolder = this.addSubFolder.bind(this);
     this.stateAddSubFolder = this.stateAddSubFolder.bind(this);
+    this.showSubFolders = this.showSubFolders.bind(this);
   }
+
   handleChange(event) {
     this.setState({ Name: event.target.value });
   }
@@ -22,7 +24,11 @@ class Folder extends Component {
     onAddSubFolder(todo.id, value.folderName);
     this.stateAddSubFolder();
   }
-
+  showSubFolders(){
+    const { onGetFoldersList, id } = this.props
+    this.setState({showSubFolder: !this.state.showSubFolder});
+    onGetFoldersList(id);
+  }
   render() {
     const {
       todo,
@@ -31,62 +37,56 @@ class Folder extends Component {
       onEditName,
       onNewNameFolder,
       match,
-      onAddSubFolder,
-      isDragging,
-      connectDragSource,
-      connectDropTarget,
+      onAddFolder,
       addNoteFolder,
       moveFolder,
       index,
+      onGetFoldersList,
     } = this.props;
-    const tod = todos.filter(v => todo.id === v.idParent);
+    const tod = todos.list.filter(v => todo.id === v.idParent);
     return (
-      <div >
-        <ReactCSSTransitionGroup
-          transitionName="fade"
-          transitionAppear={true}
-          transitionAppearTimeout={500}
-          transitionEnterTimeout={500}
-          transitionLeaveTimeout={500}
-        >
-          <FolderParent
-            index={index}
-            id={todo.id}
-            key={todo.id}
-            todo={todo}
-            onEditName={onEditName}
-            onRemoveFolder={onRemoveFolder}
-            onNewNameFolder={onNewNameFolder}
-            match={match}
-            onAddSubFolder={onAddSubFolder}
-            isDragging={isDragging}
-            connectDragSource={connectDragSource}
-            connectDropTarget={connectDropTarget}
-            addNoteFolder={addNoteFolder}
-            moveFolder={moveFolder}
-          />
-        </ReactCSSTransitionGroup>
+      <div>
+        <FolderParent
+          index={index}
+          id={todo.id}
+          key={todo.id}
+          todo={todo}
+          onEditName={onEditName}
+          onRemoveFolder={onRemoveFolder}
+          onNewNameFolder={onNewNameFolder}
+          match={match}
+          onAddFolder={onAddFolder}
+          addNoteFolder={addNoteFolder}
+          moveFolder={moveFolder}
+          showSubFolders={() => this.showSubFolders()}
+          idEdit={todos.idEdit}
+        />
         <ul style={{ listStyleType: 'none' }}>
-          {tod && tod.map((v, i) => (
-            <li key={v.id}>
-              <Folder
-                index={i}
-                id={v.id}
-                key={v.id}
-                todo={v}
-                onRemoveFolder={onRemoveFolder}
-                onEditName={onEditName}
-                onNewNameFolder={onNewNameFolder}
-                match={match}
-                onAddSubFolder={onAddSubFolder}
-                todos={todos}
-                isDraggin={isDragging}
-                connectDragSource={connectDragSource}
-                connectDropTarget={connectDropTarget}
-                moveFolder={moveFolder}
-              />
-            </li>
-        ))}
+          <ReactCSSTransitionGroup
+            transitionName="fade"
+            transitionEnterTimeout={500}
+            transitionLeaveTimeout={500}
+          >
+            {tod && this.state.showSubFolder && tod.map((v, i) => (
+              <li key={v.id}>
+                <Folder
+                  index={i}
+                  id={v.id}
+                  key={v.id}
+                  todo={v}
+                  onRemoveFolder={onRemoveFolder}
+                  onEditName={onEditName}
+                  onNewNameFolder={onNewNameFolder}
+                  match={match}
+                  onAddFolder={onAddFolder}
+                  todos={todos}
+                  moveFolder={moveFolder}
+                  showSubFolders={() => this.showSubFolders()}
+                  onGetFoldersList={onGetFoldersList}
+                />
+              </li>
+            ))}
+          </ReactCSSTransitionGroup>
         </ul>
       </div>
     );
@@ -97,11 +97,14 @@ Folder.propTypes = {
   match: PropTypes.shape({
     url: PropTypes.string.isRequired,
   }).isRequired,
-  onAddSubFolder: PropTypes.func.isRequired,
+  onAddFolder: PropTypes.func.isRequired,
   onEditName: PropTypes.func.isRequired,
   onNewNameFolder: PropTypes.func.isRequired,
   onRemoveFolder: PropTypes.func.isRequired,
-  todo: PropTypes.shape({
+  onGetFoldersList: PropTypes.func.isRequired,
+
+
+  /*todo: PropTypes.shape({
     edit: PropTypes.bool.isRequired,
     id: PropTypes.number.isRequired,
     idParent: PropTypes.oneOf(PropTypes.null, PropTypes.number).isRequired,
@@ -110,19 +113,9 @@ Folder.propTypes = {
   todos: PropTypes.arrayOf(PropTypes.shape({
     edit: PropTypes.bool.isRequired,
     id: PropTypes.number.isRequired,
-  }).isRequired).isRequired,
+  }).isRequired).isRequired,*/
 
 };
-
-/* export default flow(
-  DropTarget(['Note', 'Folder'], FolderTarget, connect => ({
-    connectDropTarget: connect.dropTarget(),
-  })),
-  DragSource('Folder', FolderSource, (connect, monitor) => ({
-    connectDragSource: connect.dragSource(),
-    isDragging: monitor.isDragging(),
-  })),
-)(Folder);*/
 
 export default Folder;
 

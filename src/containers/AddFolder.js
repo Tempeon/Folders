@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { addFolder } from '../action';
+import { addFolder } from '../action/Folders';
 
 let AddFolder = ({ dispatch }) => {
   let input;

@@ -1,34 +1,35 @@
 import { connect } from 'react-redux';
-import { removeFolder, editName, newNameFolder, removeNoteFolder, addSubFolder, addFolder, moveFolder, addNoteToFolder } from '../action';
+import { removeFolder, editName, newNameFolder, removeNoteFolder, addSubFolder, addFolder, moveFolder, addNoteToFolder, getFoldersList } from '../action/Folders';
 import FolderList from '../components/FolderList';
 
 const mapStateToProps = state => ({
   todos: state.todos,
-    // note_todos: state.note_todos,
 });
 
 const mapDispatchToProps = dispatch => ({
-  onRemoveFolder: (id, folder) => {
+  onRemoveFolder: (id) => {
     dispatch(removeFolder(id));
-    dispatch(removeNoteFolder(folder));
   },
   onEditName: (id) => {
     dispatch(editName(id));
   },
-  onNewNameFolder: (id, text) => {
-    dispatch(newNameFolder(id, text));
+  onNewNameFolder: (id, text, idParent) => {
+    dispatch(newNameFolder(id, text, idParent));
   },
   onAddSubFolder: (idParent, text) => {
     dispatch(addSubFolder(idParent, text));
   },
-  onAddFolder: (text) => {
-    dispatch(addFolder(text));
+  onAddFolder: (text, idParent) => {
+    dispatch(addFolder(text, idParent));
   },
   onMoveFolder: (dragId, hoverId, sideShift, idParent) => {
     dispatch(moveFolder(dragId, hoverId, sideShift, idParent));
   },
   onAddNoteToFolder: (noteId, folderId) => {
     dispatch(addNoteToFolder(noteId, folderId));
+  },
+  onGetFoldersList: (idParent) => {
+    dispatch(getFoldersList(idParent));
   },
 });
 

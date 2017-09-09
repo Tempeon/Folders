@@ -12,6 +12,8 @@
     "react-scripts": "1.0.7"
   },
   "dependencies": {
+    "es6-promise": "^4.1.1",
+    "isomorphic-fetch": "^2.2.1",
     "lodash": "^4.17.4",
     "material-ui": "^0.18.7",
     "prop-types": "^15.5.10",
@@ -26,7 +28,9 @@
     "react-transition-group": "^2.2.0",
     "redux": "^3.6.0",
     "redux-form": "^6.8.0",
-    "redux-form-material-ui": "^4.2.0"
+    "redux-form-material-ui": "^4.2.0",
+    "redux-logger": "^3.0.6",
+    "redux-thunk": "^2.2.0"
   },
   "scripts": {
     "start": "react-scripts start",

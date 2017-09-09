@@ -67,17 +67,17 @@ class Note extends Component {
             match,
             onRemoveNote,
             onEditName,
-            onNewNameNote,
+      editNote,
             isDragging,
             connectDragSource,
             connectDropTarget,
+            idEdit,
           } = this.props;
     const opacity = isDragging ? 0 : 1;
-    console.log(match)
-    if (!todo.edit) {
+    if (idEdit !== todo.id) {
       return connectDragSource(connectDropTarget(
         <div style={{ ...style, opacity }}>
-          <NavLink to={`/${match.params.idFolder}/${todo.id}`}>{todo.text}</NavLink>
+          <NavLink to={`/Folder/${match.params.idFolder}/Note/${todo.id}`}>{todo.Name}</NavLink>
           <div>
             <IconButton style={removeStyle} >
               <IconDelete onClick={() => onRemoveNote(todo.id)} />
@@ -93,8 +93,8 @@ class Note extends Component {
       <div style={{ ...style }}>
         <FormNoteName
           rename
-          onSubmit={value => onNewNameNote(todo.id, value.noteName)}
-          initialValues={{ noteName: todo.text }}
+          onSubmit={value => editNote(todo.id, value.noteName, todo.idFolder)}
+          initialValues={{ noteName: todo.Name }}
           cancel={() => onEditName(todo.id)}
         />
       </div>
@@ -118,7 +118,7 @@ Note.propTypes = {
   }).isRequired,
   onRemoveNote: PropTypes.func.isRequired,
   onEditName: PropTypes.func.isRequired,
-  onNewNameNote: PropTypes.func.isRequired,
+  editNote: PropTypes.func.isRequired,
   isDragging: PropTypes.bool.isRequired,
   connectDragSource: PropTypes.func.isRequired,
   connectDropTarget: PropTypes.func.isRequired,

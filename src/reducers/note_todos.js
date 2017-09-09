@@ -1,70 +1,27 @@
-const note = [
-  {
-    id: 1,
-    text: 'folder_1',
-    edit: false,
-    folder: 0,
-    content: 'Hello',
-    tags: ['123'],
-  },
-  {
-    id: 2,
-    text: 'note_2',
-    edit: false,
-    folder: 1,
-    content: 'hi',
-    tags: ['1', '3'],
-  },
-  {
-    id: 3,
-    text: 'folder_1',
-    edit: false,
-    folder: 0,
-    content: '123',
-    tags: ['folder_1'],
-  },
-  {
-    id: 4,
-    text: 'note_4',
-    edit: false,
-    folder: 1,
-    content: '123',
-    tags: ['folder_1'],
-  },
-  {
-    id: 5,
-    text: 'note_5',
-    edit: false,
-    folder: 0,
-    content: '123',
-    tags: ['2'],
-  },
-  {
-    id: 6,
-    text: 'note_6',
-    edit: false,
-    folder: 0,
-    content: '123',
-    tags: ['2'],
-  },
-  {
-    id: 7,
-    text: 'note_7',
-    edit: false,
-    folder: 0,
-    content: '123',
-    tags: ['2'],
-  },
-  {
-    id: 8,
-    text: 'note_8',
-    edit: false,
-    folder: 0,
-    content: '123',
-    tags: ['2'],
-  },
-];
+import {
+  GET_NOTE_REQUEST,
+  GET_NOTE_SUCCESS,
+  GET_NOTE_FAILURE,
+  CREATE_NOTE_REQUEST,
+  CREATE_NOTE_SUCCESS,
+  CREATE_NOTE_FAILURE,
+  REMOVE_NOTE_REQUEST,
+  REMOVE_NOTE_SUCCESS,
+  REMOVE_NOTE_FAILURE,
+  EDIT_NOTE_REQUEST,
+  EDIT_NOTE_SUCCESS,
+  EDIT_NOTE_FAILURE,
+} from '../action/Notes';
 
+const note = {
+  isCreating: false,
+  isFetch: false,
+  isEdit: false,
+  isDelete: false,
+  list: [],
+  error: false,
+  idEdit: null,
+};
 
 const todo = (state, action) => {
   switch (action.type) {
@@ -123,9 +80,54 @@ const todo = (state, action) => {
   }
 };
 
+const editNote = (state, response) => state.map((value) => {
+  if (value.id !== response.id) { return value; }
+  return { ...value, Name: response.Name };
+});
 
 const noteTodos = (state = note, action) => {
+  const { error, response } = action;
   switch (action.type) {
+    case GET_NOTE_REQUEST:
+      return { ...state, isFetch: true };
+    case GET_NOTE_SUCCESS:
+      return { ...state, error: null, isFetch: false, list: response };
+    case GET_NOTE_FAILURE:
+      return { ...state, isFetch: false, error };
+    case CREATE_NOTE_REQUEST:
+      return { ...state, isCreating: true };
+    case CREATE_NOTE_SUCCESS:
+      return { ...state, isCreating: false, error: null, list: [...state.list, response] };
+    case CREATE_NOTE_FAILURE:
+      return { ...state, isCreating: false, error };
+    case REMOVE_NOTE_REQUEST:
+      return { ...state, isDelete: true };
+    case REMOVE_NOTE_SUCCESS:
+      return { ...state,
+        isDelete: false,
+        error: null,
+        list: state.list.filter(value => value.id !== response.id),
+      };
+    case REMOVE_NOTE_FAILURE:
+      return { ...state, isDelete: false, error };
+    case EDIT_NOTE_REQUEST:
+      return { ...state, isEdit: true };
+    case EDIT_NOTE_SUCCESS:
+      return { ...state,
+        isEdit: false,
+        error: null,
+        idEdit: null,
+        list: editNote(state.list, response) };
+    case EDIT_NOTE_FAILURE:
+      return { ...state, isEdit: false, error };
+
+    case 'EDIT_NAME_NOTE':
+      if (state.idEdit !== action.id) {
+        return { ...state, idEdit: action.id };
+      }
+      return { ...state, idEdit: null };
+
+
     case 'ADD_NOTE_TO_FOLDER':
       return state.map((v) => {
         if (v.id === action.noteId) {
@@ -147,8 +149,8 @@ const noteTodos = (state = note, action) => {
         if (v.id !== action.hoverIndex) {
           return [...p, v];
         }
-        return leftMove ? [...p, v, dragCard ] : [...p, dragCard, v ];
-      }, [])   ;
+        return leftMove ? [...p, v, dragCard] : [...p, dragCard, v];
+      }, []);
       /*
             const dragCard = state[action.dragIndex];
       const Note = action.Note;
@@ -176,8 +178,6 @@ const noteTodos = (state = note, action) => {
       return state;*/
     case 'REMOVE_NOTE':
       return state.filter(t => t.id !== action.id);
-    case 'EDIT_NAME_NOTE':
-      return state.map(t => todo(t, action));
     case 'NEW_NAME_NOTE':
       return state.map(t => todo(t, action));
     case 'ADD_NOTE':
@@ -195,8 +195,8 @@ const noteTodos = (state = note, action) => {
         }
         return value;
       });
-    case 'REMOVE_NOTE_FOLDER':
-      return state.filter(v => v.folder !== action.folder);
+    /*case 'REMOVE_NOTE_FOLDER':
+      return state.filter(v => v.folder !== action.folder);*/
     case 'NEW_NAME_NOTE_CONTENT':
       return state.map(t => todo(t, action));
     case 'ADD_TAG':

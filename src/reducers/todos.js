@@ -1,26 +1,42 @@
-const folder = [
-  {
-    id: 0,
-    edit: false,
-    text: 'folder_1',
-    subfolder: [],
-    idParent: null,
-  },
-  {
-    id: 1,
-    edit: false,
-    text: 'folder_2',
-    subfolder: [],
-    idParent: null,
-  },
-  {
-    id: 2,
-    edit: false,
-    text: 'folder_3',
-    subfolder: [],
-    idParent: null,
-  },
-];
+import {
+  GET_FOLDERS_REQUEST,
+  GET_FOLDERS_SUCCESS,
+  GET_FOLDERS_FAILURE,
+  CREATE_FOLDER_REQUEST,
+  CREATE_FOLDER_SUCCESS,
+  CREATE_FOLDER_FAILURE,
+  REMOVE_FOLDER_REQUEST,
+  REMOVE_FOLDER_SUCCESS,
+  REMOVE_FOLDER_FAILURE,
+  RENAME_FOLDER_REQUEST,
+  RENAME_FOLDER_SUCCESS,
+  RENAME_FOLDER_FAILURE,
+} from '../action/Folders';
+
+const folder = {
+  isCreating: false,
+  isFetch: false,
+  isRename: false,
+  isDelete: false,
+  list: [],
+  error: false,
+  idEdit: null,
+  /* {
+    1: {
+      name: 'folder_1',
+      idParent: '0',
+    },
+    2: {
+      name: 'folder_2',
+      idParent: '0',
+    },
+    3: {
+      name: 'folder_3',
+      idParent: '0',
+    },
+  },*/
+
+};
 
 const addSubFolder = (state, action) => [
   ...state,
@@ -28,12 +44,33 @@ const addSubFolder = (state, action) => [
     id: action.id,
     text: action.text,
     edit: action.edit,
-    subfolder: [],
+    showSubFolder: false,
     idParent: action.idParent,
   },
 ];
 
-const deletFolder = (state, action, mass = [action]) => {
+ const deletFolder = (state, id, mass=state, action) => {
+   console.log(state, id)
+   /*state.map((t) => {
+    if (t.idParent === action) {
+      mass.push(t.id);
+    }
+    return t;
+  });
+  mass.map(v => state = state.filter(t => t.id !== v));
+  return state;
+*/
+  state = state.filter(folder => folder.id !== id);
+  const subFolder = state.find(folder => folder.parentId === id);
+  if (subFolder) {
+    state = deletFolder(state, subFolder.id);
+  } else {
+    return state;
+  }
+  return deletFolder(state, id);
+};
+
+/*const deletFolder = (state, action, mass = [action]) => {
   state.map((t) => {
     if (t.idParent === action) {
       mass.push(t.id);
@@ -42,53 +79,49 @@ const deletFolder = (state, action, mass = [action]) => {
   });
   mass.map(v => state = state.filter(t => t.id !== v));
   return state;
-};
+};*/
 
-const todo = (state, action) => {
-  switch (action.type) {
-    case 'ADD_FOLDER':
-      return {
-        id: action.id,
-        text: action.text,
-        edit: action.edit,
-        subfolder: [],
-        idParent: null,
-      };
-    case 'EDIT_NAME':
-      if (state.id !== action.id) {
-        return {
-          ...state,
-          edit: false,
-        };
-      }
-      return {
-        ...state,
-        edit: !state.edit,
-      };
-    case 'NEW_NAME_FOLDER':
-      if (state.id !== action.id) { return state; }
-      return {
-        ...state,
-        text: action.text,
-        edit: !state.edit,
-      };
-    default:
-      return state;
-  }
-};
-const parent = (state, id) => {
-  return {
-    ...state,
-    idParent: id,
-  };
-}
+const parent = (state, id) => ({
+  ...state,
+  idParent: id,
+});
 const todos = (state = folder, action) => {
+  const { error, response } = action;
   switch (action.type) {
+    case GET_FOLDERS_REQUEST:
+      return { ...state, isFetch: true };
+    case GET_FOLDERS_SUCCESS:
+      return { ...state, error: null, isFetch: false, list: response/* {...state.list, ...response}*/ }; // /////list
+    case GET_FOLDERS_FAILURE:
+      return { ...state, isFetch: false, error };
+    case CREATE_FOLDER_REQUEST:
+      return { ...state, isCreating: true };
+    case CREATE_FOLDER_SUCCESS:
+      return { ...state, isCreating: false, error: null, list: [...state.list, response] };
+    case CREATE_FOLDER_FAILURE:
+      return { ...state, isCreating: false, error };
+    case REMOVE_FOLDER_REQUEST:
+      return { ...state, isDelete: true };
+    case REMOVE_FOLDER_SUCCESS:
+      return { ...state, error: null, isDelete: false, list: deletFolder(state.list, response.id) };  // // render
+    case REMOVE_FOLDER_FAILURE:
+      return { ...state, isDelete: false, error };
+    case RENAME_FOLDER_REQUEST:
+      return { ...state, isRename: true };
+    case RENAME_FOLDER_SUCCESS:
+      const list = state.list.map((folders) => {
+        if (folders.id !== response.id) { return folders; }
+        return { ...folders, Name: response.Name };
+      });
+      return { ...state, isRename: false, idEdit: null, error: null, list };
+    case RENAME_FOLDER_FAILURE:
+      return { ...state, isRename: false, error };
+
     case 'MOVE_FOLDER':
-      let leftMove = false;
-      const dragCard = state.find(v => v.id === action.dragId);
-      const newDragCard = parent(dragCard, action.idParent)
-      return state.reduce((p, v) => {
+      /*let leftMove = false;
+      const dragCard = state.list.find(v => v.id === action.dragId);
+      const newDragCard = parent(dragCard, action.idParent);
+      return state.list.reduce((p, v) => {
         if (v.id === action.dragId) {
           leftMove = true;
           return p;
@@ -96,23 +129,18 @@ const todos = (state = folder, action) => {
         if (v.id !== action.hoverId) {
           return [...p, v];
         }
-        return leftMove ? [...p, v, newDragCard ] : [...p, newDragCard, v ];
-      }, []);
-    case 'ADD_FOLDER':
-      return [
-        ...state,
-        todo(undefined, action),
-      ];
-    case 'REMOVE_FOLDER':
-      return deletFolder(state, action.id);
+        return leftMove ? [...p, v, newDragCard] : [...p, newDragCard, v];
+      }, []);*/
+      const dragFolder = state.list[action.dragId];
+      const newCopyFolders = state.list.slice();
+      newCopyFolders.splice(action.dragId, 1);
+      newCopyFolders.splice(action.hoverId, 0, dragFolder);
+      return {...state, list: newCopyFolders};
     case 'EDIT_NAME':
-      return state.map(t =>
-        todo(t, action));
-    case 'NEW_NAME_FOLDER':
-      return state.map(t =>
-        todo(t, action));
-    case 'ADD_SUB_FOLDER':
-      return addSubFolder(state, action);
+      if (state.idEdit !== action.id) {
+        return { ...state, idEdit: action.id };
+      }
+      return { ...state, idEdit: null };
     default:
       return state;
   }

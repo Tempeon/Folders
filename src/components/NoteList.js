@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import IconButton from 'material-ui/IconButton';
 import IconAddFile from 'material-ui/svg-icons/action/note-add';
 import IconCancel from 'material-ui/svg-icons/content/reply';
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import FormNoteName from './FormNoteName';
 import Note from './Note';
 
@@ -26,6 +27,11 @@ class NoteList extends Component {
     this.remove = this.remove.bind(this);
   }
 
+  componentWillMount() {
+    const { onGetNoteList, match } = this.props;
+    onGetNoteList(match.params.idFolder);
+  }
+
   startAddNote() {
     this.setState({ addNote: !this.state.addNote });
   }
@@ -43,18 +49,20 @@ class NoteList extends Component {
   }
   remove() {
     const { match, history } = this.props
-    history.push(`/${match.params.idFolder}`);
+    history.push(`/Folder/${match.params.idFolder}`);
   }
 
   render() {
-    const { todos, match, onRemoveNote, onEditName, onNewNameNote } = this.props;
-    const tod = todos.filter(v => v.folder === parseInt(match.params.idFolder, 10));
+    const { todos, match, onRemoveNote, onEditName, editNote, width } = this.props;
+    const tod = todos.list.filter(v => v.idFolder === parseInt(match.params.idFolder, 10));
     return (
-      <div >
-        <div style={styleHeadNote}>
-          <IconButton onClick={()=> this.remove()}>
+      <div style={{ width: `${width}` }}>
+        <div style={{...styleHeadNote, paddingLeft: '50px'}}>
+          {match.params.idNote &&
+          <IconButton onClick={() => this.remove()}>
             <IconCancel />
           </IconButton>
+          }
           <h3> Note </h3>
           <IconButton
             onClick={() => this.startAddNote()}
@@ -70,24 +78,33 @@ class NoteList extends Component {
           cancel={() => this.startAddNote()}
         />
           )}
-
-        <div style={styleContent} >
-          {tod.map((todo, i) => (
-            <Note
-              onRemoveNote={onRemoveNote}
-              key={todo.id}
-              index={i}
-              id={todo.id}
-              match={match}
-              todo={todo}
-              onEditName={onEditName}
-              onNewNameNote={onNewNameNote}
-              moveNote={this.moveNote}
-              tod={tod}
-              type="Note"
-            />
-            ))}
-        </div>
+          <div  >
+            <ReactCSSTransitionGroup
+              component="ul"
+              style={{ listStyleType: 'none' }}
+              transitionName="fade"
+              transitionEnterTimeout={1000}
+              transitionLeaveTimeout={1000}
+            >
+            {tod.map((todo, i) => (
+              <li key={todo.id}>
+              <Note
+                onRemoveNote={onRemoveNote}
+                index={i}
+                id={todo.id}
+                match={match}
+                todo={todo}
+                onEditName={onEditName}
+                editNote={editNote}
+                moveNote={this.moveNote}
+                tod={tod}
+                type="Note"
+                idEdit={todos.idEdit}
+              />
+              </li>
+              ))}
+            </ReactCSSTransitionGroup>
+          </div>
         <br />
       </div>
     );
@@ -101,15 +118,16 @@ NoteList.propTypes = {
   onAddNote: PropTypes.func.isRequired,
   onEditName: PropTypes.func.isRequired,
   onMoveNote: PropTypes.func.isRequired,
-  onNewNameNote: PropTypes.func.isRequired,
+  editNote: PropTypes.func.isRequired,
   onRemoveNote: PropTypes.func.isRequired,
-  todos: PropTypes.arrayOf(PropTypes.shape({
+  onGetNoteList: PropTypes.func.isRequired,
+  /*todos: PropTypes.arrayOf(PropTypes.shape({
     content: PropTypes.string.isRequired,
     edit: PropTypes.bool.isRequired,
     folder: PropTypes.number.isRequired, // /string? number?
     id: PropTypes.number.isRequired,
     text: PropTypes.string.isRequired,
-  }).isRequired).isRequired,
+  }).isRequired).isRequired,*/
 };
 
 

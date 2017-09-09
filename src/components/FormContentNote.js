@@ -32,6 +32,7 @@ const styleTextField = {
 };
 const tag = ({ input, addTag, cancel, meta: { touched, error, warning } }) => {
   let x = '';
+  console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!', input.value)
   return (
     <div style={{ ...styleTag }}>
       {input.value.map(value => (
@@ -75,7 +76,7 @@ class FormContentNote extends Component {
   constructor(props) {
     super(props);
     const { property } = this.props;
-    this.state = { name: property.text, addTag: false, nameTag: '', contents: property.content };
+    this.state = { name: property.Name, addTag: false, nameTag: '', contents: property.content };
     this.fileName = this.fileName.bind(this);
     this.content = this.content.bind(this);
   }
@@ -110,11 +111,11 @@ class FormContentNote extends Component {
   render() {
     const { handleSubmit } = this.props;
     return (
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} >
         <Field name="name" val={this.state.name} type="label" component={this.fileName} label="NameNote" /><br />
         <label htmlFor="Tags">Tags: </label>
+
         <div style={styleTag}>
-          <Field addTag={this.state.addTag} cancel={() => this.setState({ addTag: !this.state.addTag })} name="Tags" label="Tag: " component={tag} />
           {!this.state.addTag &&
           <FloatingActionButton
             label="+"
@@ -126,7 +127,7 @@ class FormContentNote extends Component {
           </FloatingActionButton>
           }
         </div>
-        <Field name="content" type="label" val={this.state.contents} component={this.content} label="Content" />
+        <Field name="Content" type="label" val={this.state.contents} component={this.content} label="Content" />
         <div style={{ textAlign: 'center' }}>
           <RaisedButton
             label="Save"
@@ -156,6 +157,4 @@ export default (props) => {
   })(FormContentNote);
   return <Form {...props} />;
 };
-/* <button onClick={() => input.onChange(input.value.filter(val => val !== value))}>
-  X
-</button>*/
+/* <Field addTag={this.state.addTag} cancel={() => this.setState({ addTag: !this.state.addTag })} name="Tags" label="Tag: " component={tag} />*/

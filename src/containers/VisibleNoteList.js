@@ -1,20 +1,23 @@
 import { connect } from 'react-redux';
 import NoteList from '../components/NoteList';
-import { removeNote, editNameNote, newNameNote, addNote, moveNote } from '../action';
+import { removeNote, editNameNote, editNote, addNote, moveNote, getNoteList } from '../action/Notes';
 
 const mapStateToProps = state => ({
   todos: state.noteTodos,
 });
 
 const DispatchToProps = dispatch => ({
+  onGetNoteList: (id) => {
+    dispatch(getNoteList(id));
+  },
   onRemoveNote: (id) => {
     dispatch(removeNote(id));
   },
   onEditName: (id, content) => {
     dispatch(editNameNote(id, content));
   },
-  onNewNameNote: (id, text) => {
-    dispatch(newNameNote(id, text));
+  editNote: (id, Name, idFolder) => {
+    dispatch(editNote(id, Name, idFolder));
   },
   onAddNote: (text, folder) => {
     dispatch(addNote(text, folder));

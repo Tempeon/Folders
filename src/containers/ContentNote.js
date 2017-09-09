@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import Content from '../components/Content';
-import { formContentNote } from '../action';
+import { formContentNote } from '../action/Folders';
 
 const mapStateToProps = state => ({
   content: state.noteTodos,

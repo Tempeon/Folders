@@ -11,9 +11,11 @@ const style = {
   flexWrap: 'wrap',
   alignContent: 'center',
   alignItems: 'center',
+  width: '70%',
+  paddingLeft: '10px',
 };
 const styleTextField = {
-  width: '220px',
+  width: '150px',
 };
 const validate = (values) => {
   const errors = {};
@@ -70,7 +72,6 @@ const FormFolderName = (props) => {
 };
 FormFolderName.propTypes = {
   handleSubmit: PropTypes.func.isRequired,
-  rename: PropTypes.bool.isRequired,
   cancel: PropTypes.func.isRequired,
 };
 
