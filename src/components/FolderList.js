@@ -5,7 +5,9 @@ import IconCreateFolder from 'material-ui/svg-icons/file/create-new-folder';
 import IconCancel from 'material-ui/svg-icons/content/reply';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import FormFolderName from './FormFolderName';
+import FormNoteName from './FormNoteName';
 import Folder from './Folder';
+import Test from './Test';
 
 const style = {
   display: 'flex',
@@ -16,7 +18,7 @@ const style = {
 class FolderList extends Component {
   constructor(props) {
     super(props);
-    this.state = { nameFolder: '', addFolder: false };
+    this.state = { nameFolder: '', addFolder: false, test: false };
     this.handleChange = this.handleChange.bind(this);
     this.showFormAddFolder = this.showFormAddFolder.bind(this);
     this.addFolder = this.addFolder.bind(this);
@@ -30,15 +32,11 @@ class FolderList extends Component {
     onGetFoldersList(0);
   }
 
-  componentWillUpdate() {
-
-  }
-
-
   handleChange(event) {
     this.setState({ nameFolder: event.target.value });
   }
   showFormAddFolder() {
+    console.log('x')
     this.setState({ addFolder: !this.state.addFolder });
   }
   addFolder(value) {
@@ -68,7 +66,10 @@ class FolderList extends Component {
       width,
       onGetFoldersList,
   } = this.props;
-    const tod = todos.list.filter(v => v.idParent === 0);
+    let tod = [];
+    if (todos !== []) {
+      tod = todos.list.filter(v => v.idParent === 0);
+    }
     return (
       <div style={{ width: `${width}` }}>
         <div style={{ ...style }}>
@@ -88,10 +89,9 @@ class FolderList extends Component {
         {this.state.addFolder && (
           <div style={{ ...style }}>
             <FormFolderName
-              initialValues={{ nameForm: 'addFolder' }}
-              rename={false}
               onSubmit={this.addFolder}
               cancel={() => this.showFormAddFolder()}
+
             />
           </div>
         )}
@@ -144,3 +144,13 @@ FolderList.propTypes = {
 
 };
 export default FolderList;
+
+
+/*
+<FormFolderName
+              initialValues={{ nameForm: 'addFolder' }}
+              rename={false}
+              onSubmit={this.addFolder}
+              cancel={() => this.showFormAddFolder()}
+            />
+ */

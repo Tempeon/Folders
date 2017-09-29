@@ -3,16 +3,22 @@ import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import IconButton from 'material-ui/IconButton';
 import IconSearch from 'material-ui/svg-icons/action/search';
+import Drawer from 'material-ui/Drawer';
+
+
+
 import SearchForm from './SearchForm';
 
 const styleHeadSearch = {
   display: 'flex',
-  flexDirection: 'row',
+  flexDirection: 'row-reverse',
+  marginRight: '40px',
+
 };
 class Search extends Component {
   constructor(props) {
     super(props);
-    this.state = { name: '', type: '', showFormSearch: false, showRezult: false };
+    this.state = { name: '', type: '', showFormSearch: false, showRezult: false, open: false };
     this.findName = this.findName.bind(this);
     this.setType = this.setType.bind(this);
     this.showSearch = this.showSearch.bind(this);
@@ -34,68 +40,85 @@ class Search extends Component {
   }
   render() {
     const { stateSearch } = this.props;
-    const colFolder = stateSearch.folder.length;
-    const colFile = stateSearch.file.length;
-    const colTag = stateSearch.tag.length;
+    const colFolder = stateSearch.list.folder.length;
+    const colFile = stateSearch.list.file.length;
+    const colTag = stateSearch.list.tags.length;
     return (
-      <div>
+      <div style={{width: '100%', } }>
         <div style={styleHeadSearch}>
           <h3>Search </h3>
           <IconButton tooltip="Search">
             <IconSearch onClick={() => this.showSearch()} />
           </IconButton>
         </div>
-        {this.state.showFormSearch && (
-          <div>
-            <SearchForm
-              initialValues={{ TypeSearch: 'Name' }}
-              onSubmit={value => this.rezult(value)}
-            />
-            {this.state.showRezult && <div>
-              <h3>Rezult: {colFolder + colFile + colTag}</h3>
-              {colFolder !== 0 && (
+        <Drawer
+          open={this.state.showFormSearch}
+          openSecondary
+        >
+          <div style={styleHeadSearch}>
+            <h3>Search </h3>
+            <IconButton tooltip="Search">
+              <IconSearch onClick={() => this.showSearch()} />
+            </IconButton>
+          </div>
+
+          <SearchForm
+            initialValues={{ TypeSearch: 'Name' }}
+            onSubmit={value => this.rezult(value)}
+          />
+          {this.state.showRezult && <div>
+            <h3>Rezult: {colFolder + colFile + colTag}</h3>
+            {colFolder !== 0 && (
               <div>
                 <h3>Folders: {colFolder}</h3>
                 <ul>
-                  {stateSearch.folder.map(v => (
+                  {stateSearch.list.folder.map(v => (
                     <li key={v.id}>
-                      <Link to={`/${v.id}`} >{v.text}</Link>
+                      <Link to={`/Folder/${v.id}`} >{v.Name}</Link>
                     </li>
                   ))}
                 </ul>
               </div>
             )}
-              {colFile !== 0 && (
+            {colFile !== 0 && (
               <div>
                 <h3>Notes: {colFile}</h3>
                 <ul>
-                  {stateSearch.file.map(v => (
+                  {stateSearch.list.file.map(v => (
                     <li key={v.id}>
-                      <Link to={`/${v.folder}/${v.id}`} >{v.text} </Link>
+                      <Link to={`/Folder/${v.idFolder}/Note/${v.id}`} >{v.Name} </Link>
                     </li>
-              ))}
+                  ))}
                 </ul>
               </div>
             )}
-              {colTag !== 0 && (
+            {colTag !== 0 && (
               <div>
                 <h3>Tag: {colTag}</h3>
                 <ul>
-                  {stateSearch.tag.map(v => (
+                  {stateSearch.list.tags.map(v => (
                     <li key={v.id}>
-                      <Link to={`/${v.folder}/${v.id}`} >{v.text}</Link>
+                      <Link to={`/${v.idFolder}/${v.id}`} >{v.Name}</Link>
                     </li>
-              ))}
+                  ))}
                 </ul>
               </div>
-          )}
-              {stateSearch.folder.length === 0 && stateSearch.file.length === 0
-                && stateSearch.tag.length === 0 && (
-                <h3>Not Found.</h3>
-              )}
-            </div>}
-          </div>
-        )}
+            )}
+            {colFolder === 0 && colFile === 0
+            && colTag === 0 && (
+              <h3>Not Found.</h3>
+            )}
+          </div>}
+        </Drawer>
+
+
+
+
+
+
+
+
+
       </div>
     );
   }

@@ -8,9 +8,9 @@ import {
   REMOVE_NOTE_REQUEST,
   REMOVE_NOTE_SUCCESS,
   REMOVE_NOTE_FAILURE,
-  EDIT_NOTE_REQUEST,
-  EDIT_NOTE_SUCCESS,
-  EDIT_NOTE_FAILURE,
+  RENAME_NOTE_REQUEST,
+  RENAME_NOTE_SUCCESS,
+  RENAME_NOTE_FAILURE,
 } from '../action/Notes';
 
 const note = {
@@ -110,15 +110,15 @@ const noteTodos = (state = note, action) => {
       };
     case REMOVE_NOTE_FAILURE:
       return { ...state, isDelete: false, error };
-    case EDIT_NOTE_REQUEST:
+    case RENAME_NOTE_REQUEST:
       return { ...state, isEdit: true };
-    case EDIT_NOTE_SUCCESS:
+    case RENAME_NOTE_SUCCESS:
       return { ...state,
         isEdit: false,
         error: null,
         idEdit: null,
         list: editNote(state.list, response) };
-    case EDIT_NOTE_FAILURE:
+    case RENAME_NOTE_FAILURE:
       return { ...state, isEdit: false, error };
 
     case 'EDIT_NAME_NOTE':
@@ -139,9 +139,9 @@ const noteTodos = (state = note, action) => {
         return v;
       });
     case 'MOVE_NOTE':
-      let leftMove = false;
-      const dragCard = state.find(v => v.id === action.dragIndex);
-      return state.reduce((p, v) => {
+      /*let leftMove = false;
+      const dragCard = state.list.find(v => v.id === action.dragIndex);
+      return state.list.reduce((p, v) => {
         if (v.id === action.dragIndex) {
           leftMove = true;
           return p;
@@ -150,7 +150,9 @@ const noteTodos = (state = note, action) => {
           return [...p, v];
         }
         return leftMove ? [...p, v, dragCard] : [...p, dragCard, v];
-      }, []);
+      }, []);*/
+
+
       /*
             const dragCard = state[action.dragIndex];
       const Note = action.Note;
@@ -166,16 +168,19 @@ const noteTodos = (state = note, action) => {
       }, []);
       */
 
-      /*
 
-      const dragCard = state[action.dragIndex];
+
+      const dragCard = state.list[action.dragIndex];
       const Note = action.Note;
       const hoverCard = state[action.hoverIndex]
-      if (state === Note) { return state; }
 
-      state.splice(action.dragIndex, 1); // удалить
-      state.splice(action.hoverIndex, 0, dragCard);
-      return state;*/
+      console.log(dragCard)
+      console.log(action.hoverIndex)
+      console.log (state.list)
+
+      state.list.splice(action.dragIndex, 1); // удалить
+      //state.list.splice(action.hoverIndex, 0, dragCard);
+      return state;
     case 'REMOVE_NOTE':
       return state.filter(t => t.id !== action.id);
     case 'NEW_NAME_NOTE':

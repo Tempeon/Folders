@@ -42,8 +42,10 @@ const NoteSource = {
 };
 const NoteTarget = {
   hover(props, monitor) {
-    const dragId = monitor.getItem().id;
-    const hoverId = props.id;
+    //const dragId = monitor.getItem().id;
+    const dragId = monitor.getItem().index;
+   // const hoverId = props.id;
+    const hoverId = props.index;
     if (dragId === hoverId) {
       return;
     }
@@ -67,7 +69,7 @@ class Note extends Component {
             match,
             onRemoveNote,
             onEditName,
-      editNote,
+            renameNote,
             isDragging,
             connectDragSource,
             connectDropTarget,
@@ -90,10 +92,10 @@ class Note extends Component {
       ));
     }
     return (
-      <div style={{ ...style }}>
+      <div style={{ ...style, paddingLeft: '10px' }}>
         <FormNoteName
           rename
-          onSubmit={value => editNote(todo.id, value.noteName, todo.idFolder)}
+          onSubmit={value => renameNote(todo.id, value.noteName, todo.idFolder)}
           initialValues={{ noteName: todo.Name }}
           cancel={() => onEditName(todo.id)}
         />
@@ -118,7 +120,7 @@ Note.propTypes = {
   }).isRequired,
   onRemoveNote: PropTypes.func.isRequired,
   onEditName: PropTypes.func.isRequired,
-  editNote: PropTypes.func.isRequired,
+  renameNote: PropTypes.func.isRequired,
   isDragging: PropTypes.bool.isRequired,
   connectDragSource: PropTypes.func.isRequired,
   connectDropTarget: PropTypes.func.isRequired,

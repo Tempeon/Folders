@@ -182,10 +182,7 @@ export const deleteTag = (id, text) => ({
   text,
 });
 
-export const formContentNote = text => ({
-  type: 'FORM_CONTENT_NOTE',
-  text,
-});
+
 
 export const moveNote = (dragIndex, hoverIndex, sideShift) => ({
   type: 'MOVE_NOTE',

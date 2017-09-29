@@ -61,6 +61,30 @@ export const removeNote = id => (dispatch) => {
   }));
 };
 
+// --------------------------- RENAME NOTES ---------------------------
+
+export const RENAME_NOTE_REQUEST = 'RENAME_NOTE_REQUEST';
+export const RENAME_NOTE_SUCCESS = 'RENAME_NOTE_SUCCESS';
+export const RENAME_NOTE_FAILURE = 'RENAME_NOTE_FAILURE';
+
+
+const newNameNote = requestOptions => ({
+  [CALL_API]: {
+    types: [RENAME_NOTE_REQUEST, RENAME_NOTE_SUCCESS, RENAME_NOTE_FAILURE],
+    endpoint: 'Notes/Rename',
+    requestOptions,
+  },
+});
+
+export const renameNote = (id, Name, idFolder) => (dispatch) => {
+  dispatch(newNameNote({
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id, Name, idFolder }),
+  }));
+};
+
+
 // --------------------------- EDIT NOTES ---------------------------
 
 export const EDIT_NOTE_REQUEST = 'EDIT_NOTE_REQUEST';
@@ -71,20 +95,21 @@ export const EDIT_NOTE_FAILURE = 'EDIT_NOTE_FAILURE';
 const toChange = requestOptions => ({
   [CALL_API]: {
     types: [EDIT_NOTE_REQUEST, EDIT_NOTE_SUCCESS, EDIT_NOTE_FAILURE],
-    endpoint: 'Notes',
+    endpoint: 'Notes/Edit',
     requestOptions,
   },
 });
 
-export const editNote = (id, Name, idFolder) => (dispatch) => {
+export const editNote = (id, Name, Content) => (dispatch) => {
   dispatch(toChange({
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ id, Name, idFolder }),
+    body: JSON.stringify({ id, Name, Content }),
   }));
 };
 
 
+/////////////////////////////////////////////////////////////////////////////
 export const editNameNote = (id, content) => ({
   type: 'EDIT_NAME_NOTE',
   id,

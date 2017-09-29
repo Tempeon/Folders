@@ -40,16 +40,11 @@ export default store => next => async (action) => {
   }
 
   const [requestType, successType, failureType] = types;
-  console.log(types);
   next({ type: requestType });
   try {
-    console.log('try/start');
     const response = await callApi(endpoint, requestOptions);
-    console.log('const');
     next({ type: successType, response });
-    console.log('try/end');
   } catch (error) {
-    console.log('catch');
     next({ type: failureType, error: error.message || 'Something bad happened' });
   }
 };

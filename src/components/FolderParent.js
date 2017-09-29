@@ -57,9 +57,10 @@ const FolderTarget = {
 class FolderParent extends Component {
   constructor(props) {
     super(props);
-    this.state = { addSub: false, showIcon: true };
+    this.state = { addSub: false, showIcon: true, test: null };
     this.addSubFolder = this.addSubFolder.bind(this);
     this.stateAddSubFolder = this.stateAddSubFolder.bind(this);
+    this.editName = this.editName.bind(this);
   }
   stateAddSubFolder() {
     this.setState({ addSub: !this.state.addSub });
@@ -68,6 +69,11 @@ class FolderParent extends Component {
     const { onAddFolder } = this.props;
     onAddFolder(value.folderName, todo.id, todo.idParent);
     this.stateAddSubFolder();
+  }
+  editName(todo, value) {
+    const { onNewNameFolder, onEditName } = this.props;
+    onNewNameFolder(todo.id, value.folderName);
+    onEditName(todo.id);
   }
   render() {
     const { todo,
@@ -92,7 +98,7 @@ class FolderParent extends Component {
             <Link style={{ flexGrow: '1' }} to={`/Folder/${todo.id}`}>{todo.Name}</Link>
             {this.state.showIcon && <div>
               <IconButton>
-                <IconAdd onClick={() => this.stateAddSubFolder(todo)} />
+                <IconAdd onClick={() => this.stateAddSubFolder()} />
               </IconButton>
               <IconButton>
                 <IconDelete onClick={() => onRemoveFolder(todo.id)} />
@@ -104,7 +110,6 @@ class FolderParent extends Component {
           </div>
           {this.state.addSub && (
             <FormFolderName
-              initialValues={{ nameForm: 'addSubFolder' }}
               rename={false}
               onSubmit={value => this.addSubFolder(todo, value)}
               cancel={() => this.stateAddSubFolder()}
@@ -117,8 +122,8 @@ class FolderParent extends Component {
     return (
       <div style={{ ...style }}>
         <FormFolderName
-          initialValues={{ folderName: todo.Name, nameForm: todo.Name }}
-          onSubmit={value => onNewNameFolder(todo.id, value.folderName)}
+          initialValues={{ folderName: todo.Name  }}
+          onSubmit={value => this.editName(todo, value)}
           rename
           cancel={() => onEditName(todo.id)}
         />

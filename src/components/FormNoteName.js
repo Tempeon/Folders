@@ -35,9 +35,9 @@ const renderField = ({ input, label, type, meta: { touched, error, warning } }) 
 );
 
 const FormNoteName = (props) => {
-  const { handleSubmit, cancel } = props;
+  const { handleSubmit, cancel, margin } = props;
   return (
-    <form onSubmit={handleSubmit} style={{...style}}>
+    <form onSubmit={handleSubmit} style={{...style, marginLeft: margin}}>
       <Field name="noteName" type="text" component={renderField} label="NameNote" />
       <div>
         <IconButton

@@ -11,36 +11,54 @@ import VisibleNoteList from '../containers/VisibleNoteList';
 import SearchFile from '../containers/SearchFile';
 
 injectTapEventPlugin();
+
+const style = {
+  //display: 'flex',
+  //flexWrap: 'wrap',
+
+};
 const App = () => (
 
-  <Router>
-    <div>
-      <SearchFile />
+
+<Router>
+    <div style={style}>
       <Switch>
+        <Route exact path="/" render={() => <Redirect to="/Folder" />} />
         <Route
           exact
           path="/Folder"
-          render={({ match }) =>
-            <VisibleFolderList match={match} width="95%" />
+          render={({ match }) => (
+            <div>
+              <SearchFile />
+              <VisibleFolderList match={match} width="95%" />
+            </div>
+              )
           }
         />
         <Route
           exact
           path="/Folder/:idFolder"
           render={({ match, history }) => (
-            <div style={{ display: 'flex', flexWrap: 'Wrap' }}>
-              <VisibleFolderList width="30%" match={match} history={history} />
-              <VisibleNoteList width="70%" match={match} />
+            <div >
+              <SearchFile />
+              <div style={{ display: 'flex', flexWrap: 'Wrap'}}>
+                <VisibleFolderList width="350px" match={match} history={history} />
+                <VisibleNoteList width='70%' match={match} />
+              </div>
             </div>
             )
           }
         />
         <Route
           path="/Folder/:idFolder/Note/:idNote"
+          exact
           render={({ match, history }) => (
-            <div style={{ display: 'flex', flexWrap: 'Wrap' }}>
-              <VisibleNoteList width="20%" match={match} history={history} />
-              <ContentNote width="75%" match={match} />
+            <div >
+              <SearchFile />
+              <div style={{ display: 'flex', flexWrap: 'Wrap' }}>
+                <VisibleNoteList width="20%" match={match} history={history} />
+                <ContentNote width="75%" match={match} />
+              </div>
             </div>
           )}
         />

@@ -27,7 +27,7 @@ const validate = (values) => {
   /* if (!/^[A-Z0-9._%+-]/.test(values.folderName)) {
     errors.folderName = 'Invalid name';
   }*/
-  return errors;
+  return {};
 };
 
 const renderField = ({ input, label, type, meta: { touched, error, warning } }) => (
@@ -75,10 +75,7 @@ FormFolderName.propTypes = {
   cancel: PropTypes.func.isRequired,
 };
 
-export default (props) => {
-  const Form = reduxForm({
-    form: `FormFolderName${props.initialValues.nameForm}`,
-    validate,
-  })(FormFolderName);
-  return <Form {...props} />;
-};
+export default reduxForm({
+  form: 'FormFolderName',
+  validate,
+})(FormFolderName);
