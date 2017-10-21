@@ -11,11 +11,11 @@ const style = {
   flexWrap: 'wrap',
   alignContent: 'center',
   alignItems: 'center',
-  width: '70%',
+  width: '300px',
   paddingLeft: '10px',
 };
 const styleTextField = {
-  width: '150px',
+  width: '180px',
 };
 const validate = (values) => {
   const errors = {};
@@ -55,7 +55,7 @@ const FormFolderName = (props) => {
       />
       <IconButton
         type="submit"
-        tooltip="Save"
+        tooltip="Create folder"
       >
         <IconSave />
       </IconButton>

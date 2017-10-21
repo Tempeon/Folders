@@ -32,7 +32,6 @@ const styleTextField = {
 };
 const tag = ({ input, addTag, cancel, onAddTag, removeTags, idParent, meta: { touched, error, warning } }) => {
   let x = '';
-  console.log(input.value, input)
   return (
     <div style={{ ...styleTag }}>
       {input.value.map(value => (

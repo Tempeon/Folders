@@ -13,7 +13,6 @@ class Content extends Component {
 
   componentWillMount() {
     const { onGetTags, onGetNoteList, content, match } = this.props;
-    console.log('Wilmount');
     onGetTags(match.params.idNote);
     if (content.list === []) { onGetNoteList(match.params.idNote); }
   }
@@ -37,8 +36,8 @@ class Content extends Component {
   }
   render() {
     const { content, match, width, onAddTag, tags, removeTags } = this.props;
+    console.log(content)
     const sod = content.list.find(v => v.id === parseInt(match.params.idNote, 10));
-    console.log(tags.list, content.list, sod)
     if (tags.list !== [] && content.list !== []) {
       return (
         <div style={{ width: `${width}`, marginLeft: '20px', marginTop: '50px' }}>
@@ -55,18 +54,18 @@ class Content extends Component {
     }
     return (
       <h2> Not found</h2>
-    )
+    );
   }
 }
 
 Content.propTypes = {
-  content: PropTypes.arrayOf(PropTypes.shape({
+  /*content: PropTypes.arrayOf(PropTypes.shape({
     content: PropTypes.string.isRequired,
     edit: PropTypes.bool.isRequired,
     folder: PropTypes.number.isRequired,
     id: PropTypes.number.isRequired,
     text: PropTypes.string.isRequired,
-  }).isRequired).isRequired,
+  }).isRequired).isRequired,*/
   match: PropTypes.shape({
     params: PropTypes.shape({
       idFolder: PropTypes.string.isRequired,

@@ -1,10 +1,20 @@
 .parentFolder {
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    margin-bottom: .5rem;
+    background-color: white;
+    cursor: move;
+    flex-wrap: wrap;
+    padding-left: 10px;
+    padding-right: 10px;
+    width: 400px;
 }
 
 .parentFolder:hover .Folder {
-    display: block;
+    display: flex;
+    justify-content: space-between
+
 }
 
 header {
@@ -14,4 +24,13 @@ header {
 .Folder {
     flex: 1;
     display: none;
+   /* align-items: center;
+    justify-content: space-between;
+    margin-bottom: .5rem;
+    background-color: white;
+    cursor: move;
+    flex-wrap: wrap;
+    padding-left: 10px;
+    padding-right: 10px;
+    width: 300px;*/
 }

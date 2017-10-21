@@ -3,8 +3,6 @@ import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-d
 import { DragDropContext } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
 import injectTapEventPlugin from 'react-tap-event-plugin';
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
-
 import ContentNote from '../containers/ContentNote';
 import VisibleFolderList from '../containers/VisibleFolderList';
 import VisibleNoteList from '../containers/VisibleNoteList';
@@ -12,16 +10,9 @@ import SearchFile from '../containers/SearchFile';
 
 injectTapEventPlugin();
 
-const style = {
-  //display: 'flex',
-  //flexWrap: 'wrap',
-
-};
 const App = () => (
-
-
-<Router>
-    <div style={style}>
+  <Router>
+    <div >
       <Switch>
         <Route exact path="/" render={() => <Redirect to="/Folder" />} />
         <Route
@@ -39,12 +30,14 @@ const App = () => (
           exact
           path="/Folder/:idFolder"
           render={({ match, history }) => (
-            <div >
-              <SearchFile />
-              <div style={{ display: 'flex', flexWrap: 'Wrap'}}>
-                <VisibleFolderList width="350px" match={match} history={history} />
-                <VisibleNoteList width='70%' match={match} />
+            <div>
+              <div>
+                <SearchFile />
               </div>
+              <div >
+                <VisibleFolderList match={match} history={history} />
+              </div>
+                <VisibleNoteList match={match} />
             </div>
             )
           }
@@ -66,18 +59,6 @@ const App = () => (
     </div>
   </Router>
 
-
-/*   <MuiThemeProvider>
-    <Router>
-      <div>
-        <SearchFile />
-        <Route path="/" component={VisibleFolderList} />
-        <hr />
-        <Route path="/:idFolder" component={VisibleNoteList} />
-        <Route path="/:idFolder/:idNote" component={ContentNote} />
-      </div>
-    </Router>
-  </MuiThemeProvider>*/
 );
 
 export default DragDropContext(HTML5Backend)(App);

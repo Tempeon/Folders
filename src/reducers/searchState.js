@@ -1,8 +1,10 @@
 import {
   SEARCH_REQUEST,
   SEARCH_SUCCESS,
-  SEARCH_FAILURE
+  SEARCH_FAILURE,
+  CLEAR_SEARCH,
 } from '../action/Search'
+
 
 const initialState = {
   typeSearch: '',
@@ -10,8 +12,14 @@ const initialState = {
   isSearch: false,
   error: null,
   list: {
-    folder: [],
-    file: [],
+    folder: {
+      count: 0,
+      rows: [],
+    },
+    file: {
+      count: 0,
+      rows: [],
+    },
     tags: [],
   },
 };
@@ -25,6 +33,8 @@ const searchState = (state = initialState, action) => {
       return { ...state, isSearch: false, error: null, list: response };
     case SEARCH_FAILURE:
       return { ...state, isSearch: false, error };
+    case CLEAR_SEARCH:
+      return { ...state, list: initialState.list };
     default:
       return state;
   }

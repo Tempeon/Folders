@@ -2,7 +2,7 @@ import { connect } from 'react-redux';
 import Search from '../components/Search';
 import { searchFile } from '../action/Folders';
 import { getSearchList } from '../Selector/Search';
-import { search } from '../action/Search';
+import { search, clearSearch } from '../action/Search';
 
 const mapStateToProps = state => ({
   /*folders: state.todos,
@@ -15,6 +15,9 @@ const mapDispatch = dispatch => ({
   onSearchFile: (typeSearch, text) => {
     dispatch(search(typeSearch, text));
   },
+  onclearSearch: () => {
+    dispatch(clearSearch());
+  }
 });
 const SearchFile = connect(
     mapStateToProps,

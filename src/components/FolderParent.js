@@ -10,24 +10,13 @@ import IconEdit from 'material-ui/svg-icons/content/create';
 
 import { DragSource, DropTarget } from 'react-dnd';
 import FormFolderName from './FormFolderName';
+import './css/Folder.css';
 
 const style = {
   // border: '1px dashed gray',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  marginBottom: '.5rem',
-  backgroundColor: 'white',
-  cursor: 'move',
-  flexWrap: 'wrap',
-  paddingLeft: '10px',
-  paddingRight: '10px',
-  height: '40px',
-};
-
-const styleForm = {
 
 };
+
 const FolderSource = {
   beginDrag(props) {
     return {
@@ -41,15 +30,18 @@ const FolderTarget = {
   drop(props, monitor) {
     if (monitor.getItem().type !== 'Note') { return; }
     props.addNoteFolder(props.todo.id, monitor.getItem().id);
+    props.onEditIdFolder(monitor.getItem().id, props.todo.id);
   },
   hover(props, monitor) {
-    const dragId = monitor.getItem().index; // id or index
-    const hoverId = props.index; // id OR index
+    const dragId = monitor.getItem().id; // id or index
+    const hoverId = props.id; // id OR index
     const idParent = props.todo.idParent;
     if (dragId === hoverId || monitor.getItem().type === 'Note' || dragId === idParent) {
       return;
     }
     props.moveFolder(dragId, hoverId, 'bottom', idParent);
+
+      props.onEditParent( monitor.getItem().id, props.todo.idParent);
     monitor.getItem().index = hoverId;
   },
 };
@@ -63,7 +55,8 @@ class FolderParent extends Component {
     this.editName = this.editName.bind(this);
   }
   stateAddSubFolder() {
-    this.setState({ addSub: !this.state.addSub });
+    const { onIdParentCreateSub, todo } = this.props;
+    onIdParentCreateSub(todo.id);
   }
   addSubFolder(todo, value) {
     const { onAddFolder } = this.props;
@@ -77,26 +70,25 @@ class FolderParent extends Component {
   }
   render() {
     const { todo,
-            connectDropTarget,
-            connectDragSource,
-            match,
-            onRemoveFolder,
-            onEditName,
-            onNewNameFolder,
-            isDragging,
-            showSubFolders,
-            idEdit
-          } = this.props;
+      connectDropTarget,
+      connectDragSource,
+      onRemoveFolder,
+      onEditName,
+      isDragging,
+      showSubFolders,
+      idEdit,
+      idCreateSub,
+    } = this.props;
     const opacity = isDragging ? 0 : 1;
     if (idEdit !== todo.id) {
       return connectDragSource(connectDropTarget(
         <div>
-          <div style={{ ...style, opacity }} /* onMouseMove={() => this.setState({ showIcon: true })} onMouseOut={() => this.setState({ showIcon: false })}*/>
-            <IconButton>
+          <div className="parentFolder" style={{ opacity}}>
+            <IconButton >
               <EmptyFolder onClick={showSubFolders} />
             </IconButton>
             <Link style={{ flexGrow: '1' }} to={`/Folder/${todo.id}`}>{todo.Name}</Link>
-            {this.state.showIcon && <div>
+            <div className="Folder">
               <IconButton>
                 <IconAdd onClick={() => this.stateAddSubFolder()} />
               </IconButton>
@@ -106,23 +98,22 @@ class FolderParent extends Component {
               <IconButton>
                 <IconEdit onClick={() => onEditName(todo.id)} />
               </IconButton>
-            </div>}
+            </div>
           </div>
-          {this.state.addSub && (
-            <FormFolderName
-              rename={false}
-              onSubmit={value => this.addSubFolder(todo, value)}
-              cancel={() => this.stateAddSubFolder()}
-            />
-          )}
-          <hr />
+          {idCreateSub === todo.id && (
+          <FormFolderName
+            rename={false}
+            onSubmit={value => this.addSubFolder(todo, value)}
+            cancel={() => this.stateAddSubFolder()}
+          />
+        )}
         </div>,
-      ));
+    ));
     }
     return (
       <div style={{ ...style }}>
         <FormFolderName
-          initialValues={{ folderName: todo.Name  }}
+          initialValues={{ folderName: todo.Name }}
           onSubmit={value => this.editName(todo, value)}
           rename
           cancel={() => onEditName(todo.id)}
@@ -133,7 +124,7 @@ class FolderParent extends Component {
 }
 
 FolderParent.propTypes = {
-  /*todo: PropTypes.shape({
+  /* todo: PropTypes.shape({
     edit: PropTypes.bool.isRequired,
     id: PropTypes.number.isRequired,
     idParent: PropTypes.oneOf(PropTypes.null, PropTypes.number).isRequired,
@@ -141,14 +132,14 @@ FolderParent.propTypes = {
   }).isRequired,*/
   connectDropTarget: PropTypes.func.isRequired,
   connectDragSource: PropTypes.func.isRequired,
-  match: PropTypes.shape({
-    url: PropTypes.string.isRequired,
-  }).isRequired,
+  onIdParentCreateSub: PropTypes.func.isRequired,
   onAddFolder: PropTypes.func.isRequired,
   onNewNameFolder: PropTypes.func.isRequired,
   onEditName: PropTypes.func.isRequired,
   onRemoveFolder: PropTypes.func.isRequired,
   isDragging: PropTypes.bool.isRequired,
+
+
 };
 
 export default flow(

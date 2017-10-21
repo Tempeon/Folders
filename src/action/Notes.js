@@ -109,7 +109,8 @@ export const editNote = (id, Name, Content) => (dispatch) => {
 };
 
 
-/////////////////////////////////////////////////////////////////////////////
+// ///////////////////////////////////////////////////////////////////////////
+
 export const editNameNote = (id, content) => ({
   type: 'EDIT_NAME_NOTE',
   id,
@@ -122,10 +123,4 @@ export const moveNote = (dragIndex, hoverIndex, sideShift) => ({
   dragIndex,
   hoverIndex,
   sideShift,
-});
-
-export const addNoteToFolder = (noteId, folderId) => ({
-  type: 'ADD_NOTE_TO_FOLDER',
-  noteId,
-  folderId,
 });

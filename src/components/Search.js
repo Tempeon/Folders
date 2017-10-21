@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import IconButton from 'material-ui/IconButton';
 import IconSearch from 'material-ui/svg-icons/action/search';
 import Drawer from 'material-ui/Drawer';
-
+import TextField from 'material-ui/TextField';
 
 
 import SearchForm from './SearchForm';
@@ -12,7 +12,7 @@ import SearchForm from './SearchForm';
 const styleHeadSearch = {
   display: 'flex',
   flexDirection: 'row-reverse',
-  marginRight: '40px',
+  backgroundColor: '#1E90FF',
 
 };
 class Search extends Component {
@@ -34,18 +34,22 @@ class Search extends Component {
     this.setState({ showFormSearch: !this.state.showFormSearch });
   }
   rezult(value) {
-    const { onSearchFile } = this.props;
-    onSearchFile(value.TypeSearch, value.SearchFile);
-    this.setState({ showRezult: true });
+    const { onSearchFile, onclearSearch } = this.props;
+    console.log(value);
+    if (value !== '') {
+      onSearchFile(value);
+      this.setState({ showRezult: true });
+    }
+    onclearSearch();
   }
+
+
   render() {
     const { stateSearch } = this.props;
-    const colFolder = stateSearch.list.folder.length;
-    const colFile = stateSearch.list.file.length;
-    const colTag = stateSearch.list.tags.length;
+    console.log(stateSearch.list.folder)
     return (
-      <div style={{width: '100%', } }>
-        <div style={styleHeadSearch}>
+      <div style={{ backgroundColor: '#1E90FF'}}>
+        <div style={{...styleHeadSearch, marginRight: '40px'}}>
           <h3>Search </h3>
           <IconButton tooltip="Search">
             <IconSearch onClick={() => this.showSearch()} />
@@ -55,68 +59,44 @@ class Search extends Component {
           open={this.state.showFormSearch}
           openSecondary
         >
-          <div style={styleHeadSearch}>
+          <div style={{ ...styleHeadSearch, paddingRight: '40px'}}>
             <h3>Search </h3>
             <IconButton tooltip="Search">
               <IconSearch onClick={() => this.showSearch()} />
             </IconButton>
           </div>
-
-          <SearchForm
-            initialValues={{ TypeSearch: 'Name' }}
-            onSubmit={value => this.rezult(value)}
+          <TextField
+            style={{ padding: '10px' }}
+            floatingLabelText="Search"
+            onChange={event => this.rezult(event.target.value)}
           />
-          {this.state.showRezult && <div>
-            <h3>Rezult: {colFolder + colFile + colTag}</h3>
-            {colFolder !== 0 && (
-              <div>
-                <h3>Folders: {colFolder}</h3>
-                <ul>
-                  {stateSearch.list.folder.map(v => (
-                    <li key={v.id}>
-                      <Link to={`/Folder/${v.id}`} >{v.Name}</Link>
-                    </li>
+          {this.state.showRezult && <div style={{ padding: '10px' }}>
+
+            <div>
+              <h3>Folders: {stateSearch.list.folder.count}</h3>
+              <ul>
+                {stateSearch.list.folder.rows.map(v => (
+                  <li key={v.id}>
+                    <Link to={`/Folder/${v.id}`} >{v.Name}</Link>
+                  </li>
                   ))}
-                </ul>
-              </div>
-            )}
-            {colFile !== 0 && (
-              <div>
-                <h3>Notes: {colFile}</h3>
-                <ul>
-                  {stateSearch.list.file.map(v => (
-                    <li key={v.id}>
-                      <Link to={`/Folder/${v.idFolder}/Note/${v.id}`} >{v.Name} </Link>
-                    </li>
+              </ul>
+            </div>
+
+
+            <div>
+              <h3>Notes: {stateSearch.list.file.count}</h3>
+              <ul>
+                {stateSearch.list.file.rows.map(v => (
+                  <li key={v.id}>
+                    <Link to={`/Folder/${v.idFolder}/Note/${v.id}`} >{v.Name} </Link>
+                  </li>
                   ))}
-                </ul>
-              </div>
-            )}
-            {colTag !== 0 && (
-              <div>
-                <h3>Tag: {colTag}</h3>
-                <ul>
-                  {stateSearch.list.tags.map(v => (
-                    <li key={v.id}>
-                      <Link to={`/${v.idFolder}/${v.id}`} >{v.Name}</Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-            {colFolder === 0 && colFile === 0
-            && colTag === 0 && (
-              <h3>Not Found.</h3>
-            )}
+              </ul>
+            </div>
+
           </div>}
         </Drawer>
-
-
-
-
-
-
-
 
 
       </div>
@@ -125,6 +105,7 @@ class Search extends Component {
 }
 Search.propTypes = {
   onSearchFile: PropTypes.func.isRequired,
+  onclearSearch: PropTypes.func.isRequired,
   stateSearch: PropTypes.shape({
     file: PropTypes.array.isRequired,
     folder: PropTypes.array.isRequired,

@@ -11,6 +11,9 @@ import {
   RENAME_NOTE_REQUEST,
   RENAME_NOTE_SUCCESS,
   RENAME_NOTE_FAILURE,
+  EDIT_NOTE_REQUEST,
+  EDIT_NOTE_SUCCESS,
+  EDIT_NOTE_FAILURE,
 } from '../action/Notes';
 
 const note = {
@@ -18,6 +21,7 @@ const note = {
   isFetch: false,
   isEdit: false,
   isDelete: false,
+  updateContent: false,
   list: [],
   error: false,
   idEdit: null,
@@ -85,6 +89,11 @@ const editNote = (state, response) => state.map((value) => {
   return { ...value, Name: response.Name };
 });
 
+const editContent = (state, response) => state.list.map((value) => {
+  if (value.id !== response.id) { return value; }
+  return response;
+});
+
 const noteTodos = (state = note, action) => {
   const { error, response } = action;
   switch (action.type) {
@@ -120,6 +129,16 @@ const noteTodos = (state = note, action) => {
         list: editNote(state.list, response) };
     case RENAME_NOTE_FAILURE:
       return { ...state, isEdit: false, error };
+    case EDIT_NOTE_REQUEST:
+      return { ...state, updateContent: true };
+    case EDIT_NOTE_SUCCESS:
+      /*const updateList = state.list.map((value) => {
+        if (value.id !== response.id) { return value; }
+        return response;
+      });*/
+      return { ...state, updateContent: false, error: null, list: editContent(state, response) };
+    case EDIT_NOTE_FAILURE:
+      return { ...state, updateContent: false, error };
 
     case 'EDIT_NAME_NOTE':
       if (state.idEdit !== action.id) {
@@ -129,17 +148,19 @@ const noteTodos = (state = note, action) => {
 
 
     case 'ADD_NOTE_TO_FOLDER':
-      return state.map((v) => {
+      const newLists = state.list.map((v) => {
         if (v.id === action.noteId) {
           return {
             ...v,
-            folder: action.folderId,
+            idFolder: action.folderId,
           };
         }
         return v;
       });
+      console.log(newLists)
+      return { ...state, list: newLists}
     case 'MOVE_NOTE':
-      /*let leftMove = false;
+      /* let leftMove = false;
       const dragCard = state.list.find(v => v.id === action.dragIndex);
       return state.list.reduce((p, v) => {
         if (v.id === action.dragIndex) {
@@ -169,18 +190,12 @@ const noteTodos = (state = note, action) => {
       */
 
 
-
-      const dragCard = state.list[action.dragIndex];
-      const Note = action.Note;
-      const hoverCard = state[action.hoverIndex]
-
-      console.log(dragCard)
-      console.log(action.hoverIndex)
-      console.log (state.list)
-
-      state.list.splice(action.dragIndex, 1); // удалить
-      //state.list.splice(action.hoverIndex, 0, dragCard);
-      return state;
+      const newList = state.list
+      const dragFolder = newList[action.dragIndex];
+      const newCopyFolders = newList.slice();
+      newCopyFolders.splice(action.dragIndex, 1);
+      newCopyFolders.splice(action.hoverIndex, 0, dragFolder);
+      return { ...state, list: newCopyFolders };
     case 'REMOVE_NOTE':
       return state.filter(t => t.id !== action.id);
     case 'NEW_NAME_NOTE':
@@ -193,14 +208,15 @@ const noteTodos = (state = note, action) => {
     case 'EDIT_CONTENT_NOTE':
       return state.map((value) => {
         if (value.id === action.id) {
+          console.log('true', action);
           return {
             ...value,
-            content: action.content,
+            content: response.content,
           };
         }
         return value;
       });
-    /*case 'REMOVE_NOTE_FOLDER':
+    /* case 'REMOVE_NOTE_FOLDER':
       return state.filter(v => v.folder !== action.folder);*/
     case 'NEW_NAME_NOTE_CONTENT':
       return state.map(t => todo(t, action));

@@ -5,15 +5,22 @@ import IconCreateFolder from 'material-ui/svg-icons/file/create-new-folder';
 import IconCancel from 'material-ui/svg-icons/content/reply';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import FormFolderName from './FormFolderName';
-import FormNoteName from './FormNoteName';
 import Folder from './Folder';
-import Test from './Test';
 
-const style = {
+const styleHead = {
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
+  background: 'red',
 };
+
+const style = {
+  //display: 'flex',
+  //flexWrap: 'wrap',
+  //minWidth: '350px',
+  background: 'yellow',
+};
+
 
 class FolderList extends Component {
   constructor(props) {
@@ -29,14 +36,13 @@ class FolderList extends Component {
 
   componentWillMount() {
     const { onGetFoldersList } = this.props;
-    onGetFoldersList(0);
+    onGetFoldersList();
   }
 
   handleChange(event) {
     this.setState({ nameFolder: event.target.value });
   }
   showFormAddFolder() {
-    console.log('x')
     this.setState({ addFolder: !this.state.addFolder });
   }
   addFolder(value) {
@@ -65,14 +71,17 @@ class FolderList extends Component {
       onAddFolder,
       width,
       onGetFoldersList,
-  } = this.props;
+      onIdParentCreateSub,
+      onEditParent,
+      onEditIdFolder,
+    } = this.props;
     let tod = [];
     if (todos !== []) {
-      tod = todos.list.filter(v => v.idParent === 0);
+      tod = todos.list.filter(v => v.idParent === null);
     }
     return (
-      <div style={{ width: `${width}` }}>
-        <div style={{ ...style }}>
+      <div style={{ ...style, width: `${width}`, overflow: 'auto', }}>
+        <div style={ styleHead }>
           {match.params.idFolder &&
           <IconButton onClick={() => this.goingBack()}>
             <IconCancel />
@@ -117,6 +126,9 @@ class FolderList extends Component {
                 todos={todos}
                 addNoteFolder={this.addNoteFolder}
                 onGetFoldersList={onGetFoldersList}
+                onIdParentCreateSub={onIdParentCreateSub}
+                onEditParent={onEditParent}
+                onEditIdFolder={onEditIdFolder}
               />
             </li>
           ))}
@@ -132,11 +144,14 @@ FolderList.propTypes = {
   }).isRequired,
   onAddFolder: PropTypes.func.isRequired,
   onAddNoteToFolder: PropTypes.func.isRequired,
+  onIdParentCreateSub: PropTypes.func.isRequired,
   onEditName: PropTypes.func.isRequired,
   onMoveFolder: PropTypes.func.isRequired,
   onNewNameFolder: PropTypes.func.isRequired,
   onRemoveFolder: PropTypes.func.isRequired,
   onGetFoldersList: PropTypes.func.isRequired,
+  onEditParent: PropTypes.func.isRequired,
+  onEditIdFolder: PropTypes.func.isRequired,
   /*todos: PropTypes.arrayOf(PropTypes.shape({
     id: PropTypes.number.isRequired,
     Name: PropTypes.string.isRequired,
@@ -144,13 +159,3 @@ FolderList.propTypes = {
 
 };
 export default FolderList;
-
-
-/*
-<FormFolderName
-              initialValues={{ nameForm: 'addFolder' }}
-              rename={false}
-              onSubmit={this.addFolder}
-              cancel={() => this.showFormAddFolder()}
-            />
- */

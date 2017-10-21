@@ -1,15 +1,10 @@
 import { CALL_API } from '../middleware/api';
 
-let idFolder = 3;
-let idNote = 9;
-
 // --------------------------- GET FOLDERS ---------------------------
 
 export const GET_FOLDERS_REQUEST = 'GET_FOLDERS_REQUEST';
 export const GET_FOLDERS_SUCCESS = 'GET_FOLDERS_SUCCESS';
 export const GET_FOLDERS_FAILURE = 'GET_FOLDERS_FAILURE';
-
-// object.assing
 
 const getFolders = idParent => ({
   [CALL_API]: {
@@ -22,7 +17,7 @@ export const getFoldersList = idParent => (dispatch) => {
   dispatch(getFolders(idParent));
 };
 
-// --------------------------- CERATE FOLDERS ---------------------------
+// --------------------------- CREATE_FOLDERS ---------------------------
 
 export const CREATE_FOLDER_REQUEST = 'CREATE_FOLDER_REQUEST';
 export const CREATE_FOLDER_SUCCESS = 'CREATE_FOLDER_SUCCESS';
@@ -36,7 +31,7 @@ const createFolder = requestOptions => ({
   },
 });
 
-export const addFolder = (Name, idParent = '0') => (dispatch) => {
+export const addFolder = (Name, idParent = null) => (dispatch) => {
   dispatch(createFolder({
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -66,11 +61,6 @@ export const removeFolder = id => (dispatch) => {
   }));
 };
 
-/*export const removeFolder = id => ({
-  type: 'REMOVE_FOLDER',
-  id,
-});*/
-
 // --------------------------- Rename Folder ---------------------------
 
 export const RENAME_FOLDER_REQUEST = 'EDIT_FOLDER_REQUEST';
@@ -93,102 +83,38 @@ export const newNameFolder = (id, Name) => (dispatch) => {
   }));
 };
 
-/*
-  export const newNameFolder = (id, text) => ({
-  type: 'NEW_NAME_FOLDER',
-  text,
+// --------------------------- Edit Parent ---------------------------
+
+export const EDIT_PARENT_REQUEST = 'EDIT_PARENT_REQUEST';
+export const EDIT_PARENT_SUCCESS = 'EDIT_PARENT_SUCCESS';
+export const EDIT_PARENT_FAILURE = 'EDIT_PARENT_FAILURE';
+
+const newParent = requestOptions => ({
+  [CALL_API]: {
+    types: [EDIT_PARENT_REQUEST, EDIT_PARENT_SUCCESS, EDIT_PARENT_FAILURE],
+    endpoint: 'Folders/editIdParent',
+    requestOptions,
+  },
+});
+
+export const editParent = (id, idParent) => (dispatch) => {
+  dispatch(newParent({
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id, idParent }),
+  }));
+};
+// ---------------------------------------------------------------//
+export const CREATE_SUB_FOLDER = 'CREATE_SUB_FOLDER';
+
+export const idParentCreateSubFolder = id => ({
+  type: CREATE_SUB_FOLDER,
   id,
 });
-  */
-
-
-
-export const ADD_NOTE = 'ADD_NOTE';
-export const addNote = (text, folder) => ({
-  type: ADD_NOTE,
-  id: idNote++,
-  edit: false,
-  text,
-  folder,
-  content: '',
-});
-
 
 export const editName = id => ({
   type: 'EDIT_NAME',
   id,
-});
-
-
-
-export const removeNote = id => ({
-  type: 'REMOVE_NOTE',
-  id,
-});
-
-export const editNameNote = (id, content) => ({
-  type: 'EDIT_NAME_NOTE',
-  id,
-  content,
-});
-
-export const newNameNote = (id, text) => ({
-  type: 'NEW_NAME_NOTE',
-  text,
-  id,
-});
-
-export const editNote = (id, content) => ({
-  type: 'EDIT_CONTENT_NOTE',
-  id,
-  content,
-});
-
-export const removeNoteFolder = folder => ({
-  type: 'REMOVE_NOTE_FOLDER',
-  folder,
-});
-
-export const addSubFolder = (idParent, text) => ({
-  type: 'ADD_SUB_FOLDER',
-  id: idFolder++,
-  edit: false,
-  text,
-  subfolder: [],
-  idParent,
-});
-
-export const newNameNoteContent = (id, text) => ({
-  type: 'NEW_NAME_NOTE_CONTENT',
-  text,
-  id,
-});
-
-export const addTag = (id, text) => ({
-  type: 'ADD_TAG',
-  id,
-  text,
-});
-
-export const searchFile = (typeSearch, text) => ({
-  type: 'SEARCH_FILE',
-  typeSearch,
-  text,
-});
-
-export const deleteTag = (id, text) => ({
-  type: 'DELETE_TAG',
-  id,
-  text,
-});
-
-
-
-export const moveNote = (dragIndex, hoverIndex, sideShift) => ({
-  type: 'MOVE_NOTE',
-  dragIndex,
-  hoverIndex,
-  sideShift,
 });
 
 export const moveFolder = (dragId, hoverId, sideShift, idParent) => ({
@@ -198,6 +124,28 @@ export const moveFolder = (dragId, hoverId, sideShift, idParent) => ({
   sideShift,
   idParent,
 });
+
+export const EDIT_ID_FOLDER_NOTES_REQUEST = 'EDIT_ID_FOLDER_NOTES_REQUEST';
+export const EDIT_ID_FOLDER_NOTES_SUCCESS = 'EDIT_ID_FOLDER_NOTES_SUCCESS';
+export const EDIT_ID_FOLDER_NOTES_FAILURE = 'EDIT_ID_FOLDER_NOTES_FAILURE';
+
+const idFolders = requestOptions => ({
+  [CALL_API]: {
+    types: [EDIT_ID_FOLDER_NOTES_REQUEST,
+      EDIT_ID_FOLDER_NOTES_SUCCESS,
+      EDIT_ID_FOLDER_NOTES_FAILURE],
+    endpoint: 'Notes/editIdFolder',
+    requestOptions,
+  },
+});
+
+export const editIdFolder = (id, idFolder) => (dispatch) => {
+  dispatch(idFolders({
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id, idFolder }),
+  }));
+};
 
 export const addNoteToFolder = (noteId, folderId) => ({
   type: 'ADD_NOTE_TO_FOLDER',

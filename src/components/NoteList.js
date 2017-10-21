@@ -11,6 +11,8 @@ const styleHeadNote = {
   display: 'flex',
   flexWrap: 'wrap',
   alignItems: 'center',
+  marginLeft: '60px',
+
 };
 
 const styleContent = {
@@ -69,8 +71,8 @@ class NoteList extends Component {
     const { todos, match, onRemoveNote, onEditName, renameNote, width } = this.props;
     const tod = todos.list.filter(v => v.idFolder === parseInt(match.params.idFolder, 10));
     return (
-      <div style={{ width: `${width}` }}>
-        <div style={{ ...styleHeadNote, paddingLeft: '50px' }}>
+      <div style={{ width: `${width}`,   padding: '0px', margin: '0px'}}>
+        <div style={{ ...styleHeadNote, }}>
           {match.params.idNote &&
           <IconButton onClick={() => this.remove()}>
             <IconCancel />

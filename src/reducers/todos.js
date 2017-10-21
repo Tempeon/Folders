@@ -11,6 +11,7 @@ import {
   RENAME_FOLDER_REQUEST,
   RENAME_FOLDER_SUCCESS,
   RENAME_FOLDER_FAILURE,
+  CREATE_SUB_FOLDER,
 } from '../action/Folders';
 
 const folder = {
@@ -21,6 +22,7 @@ const folder = {
   list: {},
   error: false,
   idEdit: null,
+  idParentCreateSubFolder: null,
 };
 
 const addSubFolder = (state, action) => [
@@ -84,7 +86,6 @@ const deleteFolder = (state, id) => {
 
 const todos = (state = folder, action) => {
   const { error, response } = action;
-  console.log(action);
   switch (action.type) {
     case GET_FOLDERS_REQUEST:
       return { ...state, isFetch: true };
@@ -124,29 +125,37 @@ const todos = (state = folder, action) => {
       return { ...state, isRename: false, error };
 
     case 'MOVE_FOLDER':
-      /* let leftMove = false;
-      const dragCard = state.list.find(v => v.id === action.dragId);
-      const newDragCard = parent(dragCard, action.idParent);
-      return state.list.reduce((p, v) => {
-        if (v.id === action.dragId) {
-          leftMove = true;
-          return p;
-        }
-        if (v.id !== action.hoverId) {
-          return [...p, v];
-        }
-        return leftMove ? [...p, v, newDragCard] : [...p, newDragCard, v];
-      }, []);*/
-      const dragFolder = state.list[action.dragId];
-      const newCopyFolders = state.list.slice();
+      /*const newList = transformListObjToMass(state.list)
+      const dragFolder = newList[action.dragId];
+      const newCopyFolders = newList.slice();
       newCopyFolders.splice(action.dragId, 1);
       newCopyFolders.splice(action.hoverId, 0, dragFolder);
-      return { ...state, list: newCopyFolders };
+      return { ...state, list: newCopyFolders };*/
+     let leftMove = false;
+      const newList = transformListObjToMass(state.list)
+    const dragCard = newList.find(v => v.id === action.dragId);
+    const newDragCard = parent(dragCard, action.idParent);
+    const newMove = newList.reduce((p, v) => {
+      if (v.id === action.dragId) {
+        leftMove = true;
+        return p;
+      }
+      if (v.id !== action.hoverId) {
+        return [...p, v];
+      }
+      return leftMove ? [...p, v, newDragCard] : [...p, newDragCard, v];
+    }, []);
+    return { ...state, list: newMove}
     case 'EDIT_NAME':
       if (state.idEdit === action.id) {
         return { ...state, idEdit: null };
       }
       return { ...state, idEdit: action.id };
+    case CREATE_SUB_FOLDER:
+      if (state.idParentCreateSubFolder === action.id) {
+        return { ...state, idParentCreateSubFolder: null };
+      }
+      return { ...state, idParentCreateSubFolder: action.id };
     default:
       return state;
   }

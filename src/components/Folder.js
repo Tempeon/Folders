@@ -25,7 +25,7 @@ class Folder extends Component {
     this.stateAddSubFolder();
   }
   showSubFolders(){
-    const { onGetFoldersList, id } = this.props
+    const { onGetFoldersList, id } = this.props;
     this.setState({showSubFolder: !this.state.showSubFolder});
     onGetFoldersList(id);
   }
@@ -42,6 +42,9 @@ class Folder extends Component {
       moveFolder,
       index,
       onGetFoldersList,
+      onIdParentCreateSub,
+      onEditParent,
+      onEditIdFolder,
     } = this.props;
     const tod = todos.list.filter(v => todo.id === v.idParent);
     return (
@@ -60,7 +63,13 @@ class Folder extends Component {
           moveFolder={moveFolder}
           showSubFolders={() => this.showSubFolders()}
           idEdit={todos.idEdit}
+          idCreateSub={todos.idParentCreateSubFolder}
+          onIdParentCreateSub={onIdParentCreateSub}
+          onEditParent={onEditParent}
+          onEditIdFolder={onEditIdFolder}
+
         />
+        <hr />
         <ul style={{ listStyleType: 'none' }}>
           <ReactCSSTransitionGroup
             transitionName="fade"
@@ -83,6 +92,11 @@ class Folder extends Component {
                   moveFolder={moveFolder}
                   showSubFolders={() => this.showSubFolders()}
                   onGetFoldersList={onGetFoldersList}
+                  onIdParentCreateSub={onIdParentCreateSub}
+                  idCreateSub={todos.idParentCreateSubFolder}
+                  onEditParent={onEditParent}
+                  addNoteFolder={addNoteFolder}
+                  onEditIdFolder={onEditIdFolder}
                 />
               </li>
             ))}
@@ -98,10 +112,14 @@ Folder.propTypes = {
     url: PropTypes.string.isRequired,
   }).isRequired,
   onAddFolder: PropTypes.func.isRequired,
+  onEditIdFolder: PropTypes.func.isRequired,
   onEditName: PropTypes.func.isRequired,
   onNewNameFolder: PropTypes.func.isRequired,
   onRemoveFolder: PropTypes.func.isRequired,
   onGetFoldersList: PropTypes.func.isRequired,
+  onIdParentCreateSub: PropTypes.func.isRequired,
+  onEditParent: PropTypes.func.isRequired,
+  addNoteFolder: PropTypes.func.isRequired,
 
 
   /*todo: PropTypes.shape({
